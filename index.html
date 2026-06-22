@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  POST OR PAUSE — Social Media Smarts for Teens
+  ============================================================
+  HOW TO USE:
+  1. Save this file as  post-or-pause.html
+  2. Open in any modern browser — works offline, no internet needed
+  3. Works on: Chrome, Firefox, Safari, Edge
+
+  TO DEPLOY:
+  - Replit  : Create HTML/CSS/JS Repl → paste into index.html → Run
+  - CodePen : Paste everything into the HTML panel
+  - GitHub Pages: Upload as index.html, enable Pages in repo settings
+
+  HOW TO EDIT:
+  - Change character names/descriptions → search "CHARACTERS CONFIG"
+  - Change colors                       → search "COLOR PALETTE"
+  - Add / edit scenes                   → search "SCENES DATABASE"
+  - Edit meters starting values         → search "STARTING METERS"
+  - Edit endings                        → search "ENDINGS CONFIG"
+  - Edit teacher discussion questions   → search "TEACHER MODE"
+
+  No libraries. No backend. No setup. Just one HTML file.
+  ============================================================
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POST OR PAUSE</title>
+<style>
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a28;--card:#1e1e2e;--card2:#252535;
+  --accent:#7c3aed;--accent2:#a855f7;--pink:#ec4899;--cyan:#06b6d4;
+  --green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;
+  --text:#f1f5f9;--muted:#64748b;--border:#2d2d42;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex;flex-direction:column}
+
+/* ── SPLASH ── */
+#splash{align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 0%,#1a0a2e 0%,var(--bg) 70%);text-align:center;padding:20px}
+.splash-logo{font-size:clamp(2.8rem,8vw,5rem);font-weight:900;letter-spacing:-2px;background:linear-gradient(135deg,#a855f7,#ec4899,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.splash-sub{color:var(--muted);font-size:clamp(0.85rem,2.5vw,1.1rem);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px}
+.start-btn{background:linear-gradient(135deg,var(--accent),var(--pink));border:none;color:white;font-size:1.1rem;font-weight:700;padding:16px 48px;border-radius:50px;cursor:pointer;letter-spacing:1px;transition:all .3s;box-shadow:0 0 40px rgba(168,85,247,0.4)}
+.start-btn:hover{transform:scale(1.05);box-shadow:0 0 60px rgba(168,85,247,0.6)}
+.splash-tagline{margin:24px auto 0;color:#cbd5e1;font-size:clamp(1.1rem,3vw,1.5rem);font-weight:700;max-width:650px;line-height:1.4;text-align:center}
+
+/* ── CHARACTER SELECT ── */
+#charSelect{background:var(--bg);padding:20px}
+.cs-header{text-align:center;padding:30px 0 20px}
+.cs-header h2{font-size:clamp(1.4rem,4vw,2rem);font-weight:800;margin-bottom:8px}
+.cs-header p{color:var(--muted);font-size:0.9rem}
+.char-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:900px;margin:0 auto;padding:0 16px}
+.char-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:24px;cursor:pointer;transition:all .3s;text-align:center}
+.char-card:hover{border-color:var(--accent2);transform:translateY(-4px);box-shadow:0 8px 30px rgba(168,85,247,0.2)}
+.char-card.selected{border-color:var(--accent2);background:rgba(124,58,237,0.15)}
+.char-emoji{font-size:3rem;margin-bottom:12px}
+.char-name{font-weight:700;font-size:1rem;margin-bottom:6px}
+.char-desc{color:var(--muted);font-size:0.8rem;line-height:1.4}
+.cs-btn{display:block;margin:24px auto 0;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;color:white;font-size:1rem;font-weight:700;padding:14px 40px;border-radius:50px;cursor:pointer;transition:all .3s;opacity:0.4;pointer-events:none}
+.cs-btn.ready{opacity:1;pointer-events:all}
+.cs-btn.ready:hover{transform:scale(1.04)}
+
+/* ── GAME SCREEN ── */
+#game{background:var(--bg);flex-direction:column;max-width:900px;margin:0 auto;width:100%;padding:16px}
+
+/* Dashboard */
+.dashboard{background:var(--card);border-radius:16px;padding:14px 18px;margin-bottom:16px;border:1px solid var(--border)}
+.dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.dash-profile{display:flex;align-items:center;gap:10px}
+.dash-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--pink));display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.dash-info small{color:var(--muted);font-size:0.75rem}
+.dash-info strong{display:block;font-size:0.9rem}
+.act-badge{background:rgba(124,58,237,0.2);border:1px solid var(--accent);border-radius:20px;padding:4px 12px;font-size:0.75rem;color:var(--accent2)}
+.meters{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.meter-item{background:var(--bg3);border-radius:10px;padding:8px 10px}
+.meter-label{font-size:0.7rem;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between}
+.meter-bar{height:6px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.meter-fill{height:100%;border-radius:3px;transition:width 0.8s cubic-bezier(.22,.61,.36,1)}
+.m-rep .meter-fill{background:linear-gradient(90deg,var(--cyan),#3b82f6)}
+.m-sch .meter-fill{background:linear-gradient(90deg,var(--yellow),var(--orange))}
+.m-trust .meter-fill{background:linear-gradient(90deg,var(--green),#059669)}
+.m-follow .meter-fill{background:linear-gradient(90deg,var(--pink),var(--accent2))}
+.m-mh .meter-fill{background:linear-gradient(90deg,#f472b6,#c084fc)}
+
+/* Story Panel */
+.story-panel{background:var(--card);border-radius:16px;padding:20px;margin-bottom:14px;border:1px solid var(--border);min-height:200px}
+.act-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--accent2);margin-bottom:8px}
+.story-title{font-size:1.1rem;font-weight:700;margin-bottom:12px;line-height:1.3}
+.story-text{color:#cbd5e1;font-size:0.92rem;line-height:1.7;margin-bottom:16px}
+
+/* Social Media Post mock */
+.social-post{background:#0f111a;border-radius:22px;padding:0;margin:18px 0;border:1px solid rgba(148,163,184,0.18);box-shadow:0 18px 45px rgba(0,0,0,0.28);overflow:hidden;max-width:620px}
+.post-topbar{height:4px;background:linear-gradient(90deg,#ff0050,#7c3aed,#06b6d4)}
+.post-header{display:flex;align-items:center;gap:12px;padding:14px 16px 10px;border-bottom:1px solid rgba(148,163,184,0.10)}
+.post-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;box-shadow:0 0 0 2px rgba(255,255,255,0.08)}
+.post-user{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.post-user strong{font-size:0.95rem;letter-spacing:0.01em}
+.post-user span{font-size:0.76rem;color:#94a3b8;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post-platform{margin-left:auto;font-size:0.72rem;font-weight:800;letter-spacing:.03em;padding:5px 10px;border-radius:999px;text-transform:uppercase}
+.plat-tiktok{background:rgba(255,0,80,0.12);border:1px solid #ff0050;color:#ff4d86}
+.plat-insta{background:rgba(225,48,108,0.12);border:1px solid #e1306c;color:#ff77a7}
+.plat-snap{background:rgba(255,252,0,0.10);border:1px solid #fffc00;color:#fff46b}
+.plat-twitter{background:rgba(29,161,242,0.12);border:1px solid #1da1f2;color:#62c2ff}
+.post-content{font-size:1rem;line-height:1.55;margin:0;padding:16px;color:#f8fafc}
+.post-media{margin:0 16px 14px;border-radius:16px;min-height:140px;background:linear-gradient(135deg,rgba(124,58,237,0.35),rgba(236,72,153,0.18)),repeating-linear-gradient(45deg,rgba(255,255,255,0.04) 0 10px,rgba(255,255,255,0.02) 10px 20px);border:1px solid rgba(255,255,255,0.10);display:flex;align-items:center;justify-content:center;text-align:center;color:#e2e8f0;font-weight:800;letter-spacing:.03em;text-transform:uppercase}
+.post-actions{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid rgba(148,163,184,0.10);background:rgba(255,255,255,0.025)}
+.post-action-left{display:flex;gap:18px;align-items:center}
+.post-stat{display:flex;align-items:center;gap:6px;font-size:0.82rem;color:#cbd5e1;font-weight:600}
+.post-save{font-size:0.9rem;color:#cbd5e1}
+
+/* Text message mock */
+.messages{background:#1c1c2e;border-radius:12px;padding:14px;margin:14px 0;border:1px solid var(--border)}
+.msg-header{font-size:0.75rem;color:var(--muted);margin-bottom:10px;text-align:center}
+.msg{display:flex;margin-bottom:8px;gap:6px}
+.msg.them .bubble{background:var(--bg3);color:var(--text);border-radius:16px 16px 16px 4px}
+.msg.me{justify-content:flex-end}
+.msg.me .bubble{background:var(--accent);color:white;border-radius:16px 16px 4px 16px}
+.bubble{padding:8px 12px;font-size:0.84rem;max-width:75%;line-height:1.4}
+.msg-name{font-size:0.68rem;color:var(--muted);align-self:flex-end;margin-bottom:2px;white-space:nowrap}
+
+/* Choices */
+.choices{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.choice-btn{background:var(--bg3);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:left;color:var(--text);font-size:0.88rem;transition:all .25s;display:flex;align-items:flex-start;gap:10px}
+.choice-btn:hover{border-color:var(--accent2);background:rgba(124,58,237,0.12);transform:translateX(3px)}
+.choice-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.choice-text{line-height:1.4}
+.choice-hint{font-size:0.74rem;color:var(--muted);margin-top:3px}
+
+/* Consequence popup */
+.consequence{background:var(--card2);border-radius:14px;padding:16px;margin:14px 0;border-left:3px solid var(--accent);animation:slideIn .4s ease}
+.consequence.bad{border-left-color:var(--red)}
+.consequence.good{border-left-color:var(--green)}
+.consequence.warning{border-left-color:var(--yellow)}
+.csq-title{font-weight:700;font-size:0.9rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.csq-text{font-size:0.84rem;color:#cbd5e1;line-height:1.5}
+.csq-effects{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.effect-tag{padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600}
+.effect-up{background:rgba(16,185,129,0.2);color:var(--green);border:1px solid var(--green)}
+.effect-down{background:rgba(239,68,68,0.2);color:var(--red);border:1px solid var(--red)}
+
+/* Notification toast */
+.notif-container{position:fixed;top:16px;right:16px;z-index:1000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.notif{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 14px;max-width:280px;display:flex;align-items:center;gap:10px;font-size:0.82rem;animation:slideInRight .4s ease,fadeOut .4s 3.6s forwards;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+.notif-icon{font-size:1.2rem;flex-shrink:0}
+.notif-text small{color:var(--muted);font-size:0.7rem;display:block}
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes fadeOut{to{opacity:0;transform:translateX(100%)}}
+@keyframes slideIn{from{transform:translateX(-10px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* Continue button */
+.continue-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:white;font-size:0.9rem;font-weight:700;padding:13px 32px;border-radius:50px;cursor:pointer;display:block;margin:16px auto 0;transition:all .3s}
+.continue-btn:hover{transform:scale(1.04);box-shadow:0 4px 20px rgba(168,85,247,0.4)}
+
+/* Ending screen */
+#ending{align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 50% 0%,#1a0a2e 0%,var(--bg) 70%);text-align:center}
+.ending-emoji{font-size:5rem;margin-bottom:16px;animation:bounceIn .6s ease}
+@keyframes bounceIn{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.ending-title{font-size:clamp(1.6rem,5vw,2.4rem);font-weight:900;margin-bottom:8px;background:linear-gradient(135deg,var(--accent2),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ending-subtitle{color:var(--muted);font-size:1rem;margin-bottom:24px}
+.final-stats{background:var(--card);border-radius:16px;padding:20px;max-width:500px;margin:0 auto 24px;width:100%;border:1px solid var(--border)}
+.final-stats h3{font-size:0.8rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:16px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:0.9rem}
+.stat-bar-wrap{flex:1;margin:0 12px;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.stat-bar-fill{height:100%;border-radius:4px;transition:width 1s}
+.ending-msg{background:rgba(124,58,237,0.15);border:1px solid var(--accent);border-radius:12px;padding:16px;max-width:500px;margin:0 auto 24px;font-size:0.92rem;line-height:1.6;color:#c4b5fd}
+.final-message{font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:24px}
+.restart-btn{background:var(--card);border:2px solid var(--accent);color:var(--accent2);font-size:0.95rem;font-weight:700;padding:13px 36px;border-radius:50px;cursor:pointer;transition:all .3s}
+.restart-btn:hover{background:rgba(124,58,237,0.15);transform:scale(1.04)}
+
+/* Typing indicator */
+.typing{display:inline-flex;gap:4px;align-items:center;padding:8px 14px;background:var(--bg3);border-radius:16px}
+.typing span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:bounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+/* Screenshot effect */
+.screenshot-flash{position:fixed;inset:0;background:white;z-index:9999;animation:flash .3s ease;pointer-events:none}
+@keyframes flash{0%{opacity:0.8}100%{opacity:0}}
+
+/* Viral moment */
+.viral-banner{background:linear-gradient(135deg,#ff0050,#7c3aed);border-radius:12px;padding:14px;text-align:center;margin:12px 0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,0,80,0.4)}50%{box-shadow:0 0 0 12px rgba(255,0,80,0)}}
+.viral-banner strong{font-size:1rem;display:block;margin-bottom:4px}
+.viral-banner span{font-size:0.82rem;opacity:0.85}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* Teacher mode */
+.teacher-btn{position:fixed;bottom:16px;right:16px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:0.72rem;padding:6px 12px;border-radius:20px;cursor:pointer;z-index:100;transition:all .2s}
+.teacher-btn:hover{border-color:var(--accent);color:var(--accent2)}
+
+@media(max-width:500px){
+  .meters{grid-template-columns:repeat(2,1fr)}
+  .char-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NOTIFICATIONS CONTAINER -->
+<div class="notif-container" id="notifContainer"></div>
+
+<!-- ══ SPLASH ══ -->
+<div class="screen active" id="splash">
+  <div>
+    <div class="splash-logo">POST OR PAUSE</div>
+    <div class="splash-sub">Social Media Smarts for Teens</div>
+    <button class="start-btn" onclick="goToCharSelect()">TAP TO START</button>
+    <p class="splash-tagline">Every post can shape your future.</p>
+  </div>
+</div>
+
+<!-- ══ CHARACTER SELECT ══ -->
+<div class="screen" id="charSelect">
+  <div class="cs-header">
+    <h2>Choose Your Character</h2>
+    <p>Your path shapes your story.</p>
+  </div>
+  <div class="char-grid">
+    <div class="char-card" onclick="selectChar('athlete')" data-char="athlete">
+      <div class="char-emoji">🏈</div>
+      <div class="char-name">Jordan — The Athlete</div>
+      <div class="char-desc">Star wide receiver. D1 scouts are watching. One viral moment could make — or break — your scholarship.</div>
+    </div>
+    <div class="char-card" onclick="selectChar('gamer')" data-char="gamer">
+      <div class="char-emoji">🎮</div>
+      <div class="char-name">Riley — The Streamer</div>
+      <div class="char-desc">12K followers on Twitch. Building a brand. But sometimes the internet brings out the worst in people — including you.</div>
+    </div>
+    <div class="char-card" onclick="selectChar('influencer')" data-char="influencer">
+      <div class="char-emoji">📱</div>
+      <div class="char-name">Maya — The Influencer</div>
+      <div class="char-desc">50K on TikTok and growing. Brands are reaching out. One bad collab or cancelled moment could end it all.</div>
+    </div>
+    <div class="char-card" onclick="selectChar('newgrad')" data-char="newgrad">
+      <div class="char-emoji">🎓</div>
+      <div class="char-name">Devin — The New Grad Student</div>
+      <div class="char-desc">First job search season. Applications, LinkedIn, and interviews are happening now. One post can shape how employers see you.</div>
+    </div>
+  </div>
+  <button class="cs-btn" id="csBtn" onclick="startGame()">START MY STORY →</button>
+</div>
+
+<!-- ══ GAME ══ -->
+<div class="screen" id="game">
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <div class="dash-top">
+      <div class="dash-profile">
+        <div class="dash-avatar" id="dashAvatar">🏈</div>
+        <div class="dash-info">
+          <strong id="dashName">Jordan</strong>
+          <small id="dashTitle">Student Athlete</small>
+        </div>
+      </div>
+      <div class="act-badge" id="actBadge">Act 1 — New School Year</div>
+    </div>
+    <div class="meters">
+      <div class="meter-item m-rep">
+        <div class="meter-label"><span>Reputation</span><span id="mRepVal">70</span></div>
+        <div class="meter-bar"><div class="meter-fill" id="mRep" style="width:70%"></div></div>
+      </div>
+      <div class="meter-item m-sch">
+        <div class="meter-label"><span>Scholarship</span><span id="mSchVal">65</span></div>
+        <div class="meter-bar"><div class="meter-fill" id="mSch" style="width:65%"></div></div>
+      </div>
+      <div class="meter-item m-trust">
+        <div class="meter-label"><span>Team Trust</span><span id="mTrustVal">80</span></div>
+        <div class="meter-bar"><div class="meter-fill" id="mTrust" style="width:80%"></div></div>
+      </div>
+      <div class="meter-item m-follow">
+        <div class="meter-label"><span>Followers</span><span id="mFollowVal">3.2K</span></div>
+        <div class="meter-bar"><div class="meter-fill" id="mFollow" style="width:40%"></div></div>
+      </div>
+      <div class="meter-item m-mh">
+        <div class="meter-label"><span>Mental Health</span><span id="mMHVal">75</span></div>
+        <div class="meter-bar"><div class="meter-fill" id="mMH" style="width:75%"></div></div>
+      </div>
+    </div>
+  </div>
+  <!-- Story Area -->
+  <div class="story-panel" id="storyPanel"></div>
+  <!-- Choices / Continue -->
+  <div id="choicesArea"></div>
+</div>
+
+<!-- ══ ENDING ══ -->
+<div class="screen" id="ending">
+  <div class="ending-emoji" id="endEmoji">🏆</div>
+  <div class="ending-title" id="endTitle">Scholarship Secured</div>
+  <div class="ending-subtitle" id="endSub">Here's how your digital choices shaped your future.</div>
+  <div class="final-stats" id="finalStats"></div>
+  <div class="ending-msg" id="endMsg"></div>
+  <div class="final-message">"Your future is bigger than one post."</div>
+  <button class="restart-btn" onclick="restartGame()">↩ Play Again</button>
+</div>
+
+<!-- Teacher Mode -->
+<button class="teacher-btn" onclick="toggleTeacher()" id="teacherBtn">📊 Teacher Mode</button>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+var state = {
+  char: null,
+  meters: { rep: 70, sch: 65, trust: 80, follow: 40, mh: 75 },
+  followersDisplay: 3200,
+  flags: {}, // story flags for branching
+  act: 1,
+  sceneIdx: 0,
+  delayedConsequences: [] // consequences triggered later
+};
+
+var chars = {
+  athlete:    { emoji:'🏈', name:'Jordan', title:'Student Athlete',    followBase: 3200 },
+  gamer:      { emoji:'🎮', name:'Riley',  title:'Streamer',           followBase: 12000 },
+  influencer: { emoji:'📱', name:'Maya',   title:'Influencer',         followBase: 50000 },
+  newgrad:    { emoji:'🎓', name:'Devin',  title:'New Grad Student',    followBase: 1800 }
+};
+
+// ══════════════════════════════════════════
+// SCENES DATABASE
+// ══════════════════════════════════════════
+var scenes = [
+
+// ── ACT 1 ──────────────────────────────
+
+{ id:'a1_intro', act:1, actLabel:'Act 1 — New School Year',
+  title:'The Summer Highlight',
+  text:`It's the first week of school. Summer was lowkey amazing — you posted a <strong>highlight reel</strong> of your wins and it went <em>semi-viral</em> in your city. Feels good.<br><br>But now your teammate Marcus posts a Story throwing SERIOUS shade at Coach Williams, calling him "trash" and saying the team has no chance this season.`,
+  post: { avatar:'😤', user:'Marcus_22', platform:'insta', handle:'@marcus_22throws', content:'ngl this coaching staff is a JOKE. we gotta show up for ourselves bc nobody else is 💀🚮', likes:'312', comments:'87', time:'2h ago' },
+  choices:[
+    { icon:'🔁', text:'React with 😂 and reply "Lmaoooo fr tho"', hint:'It\'s funny and you agree a little...', effect:{ trust:-15, rep:-10, sch:-5 }, flag:'reacted_marcus', next:'a1_marcus_coach' },
+    { icon:'😶', text:'Scroll past. Not your drama.', hint:'Not your beef. Why get involved?', effect:{ trust:5, rep:5 }, flag:'ignored_marcus', next:'a1_tiktok' },
+    { icon:'📲', text:'DM Marcus privately: "bro take that down before coach sees it"', hint:'Looking out without making it public.', effect:{ trust:10, rep:5, mh:5 }, flag:'warned_marcus', next:'a1_marcus_warned' }
+  ]
+},
+
+{ id:'a1_marcus_warned', act:1, actLabel:'Act 1 — New School Year',
+  title:'Marcus Texts Back',
+  text:`Marcus hits you back immediately:`,
+  messages:[
+    { who:'them', name:'Marcus_22', text:'bro you always gotta play it safe smh' },
+    { who:'them', name:'Marcus_22', text:'nobody even follows coach on here' },
+    { who:'me', text:'i\'m just saying recruiters look at your whole circle. not just you.' },
+    { who:'them', name:'Marcus_22', text:'...aight fine ill take it down 🙄' }
+  ],
+  consequence:{ type:'good', title:'🤝 Smart Move', text:'Marcus deleted the post. Coach never saw it. You protected your teammate AND your team\'s image.', effects:['+Trust','+Rep'] },
+  choices:[
+    { icon:'▶', text:'Continue the story', hint:'', effect:{}, next:'a1_tiktok' }
+  ]
+},
+
+{ id:'a1_marcus_coach', act:1, actLabel:'Act 1 — New School Year',
+  title:'Uh oh...',
+  text:`Three days later, Coach Williams calls a team meeting. He holds up his phone. Someone screenshotted the exchange — including YOUR laughing reaction — and sent it to him.`,
+  consequence:{ type:'bad', title:'📸 Screenshot Caught', text:'Your laugh reaction showed up on Coach\'s radar. He\'s watching you now. The whole team knows.', effects:['-Team Trust','-Scholarship'] },
+  choices:[
+    { icon:'▶', text:'Continue', hint:'', effect:{}, next:'a1_tiktok' }
+  ]
+},
+
+{ id:'a1_tiktok', act:1, actLabel:'Act 1 — The Trend',
+  title:'The Viral Trend',
+  text:`A new TikTok trend is blowing up. It's called <strong>#SchoolTakeoverChallenge</strong> — students sneak out of class to film 30-second dances in the hallway. Half your school has done it.<br><br>Your friends are blowing your phone up:`,
+  messages:[
+    { who:'them', name:'Kayla💗', text:'JORDAN u have to do it omg everyone is doing it' },
+    { who:'them', name:'T-Smooth', text:'bro if you don\'t do this with us I\'m dead 💀' },
+    { who:'them', name:'Kayla💗', text:'it\'s literally just a dance. admin doesn\'t care' }
+  ],
+  choices:[
+    { icon:'🎬', text:'Film it — sneak out during 3rd period. YOLO.', hint:'Your followers will love it. Admin might not though.', effect:{ follow:15, rep:10, sch:-20, mh:5 }, flag:'did_trend', next:'a1_trend_result' },
+    { icon:'📹', text:'Film a version AFTER school in the parking lot', hint:'Same vibe, no risk of getting caught.', effect:{ follow:8, rep:5 }, flag:'safe_trend', next:'a1_trend_safe' },
+    { icon:'🚫', text:'Hard pass. Not risking detention before playoffs.', hint:'Your focus is on bigger things.', effect:{ trust:5, sch:5, mh:5 }, flag:'skipped_trend', next:'a1_breakup_scene' }
+  ]
+},
+
+{ id:'a1_trend_result', act:1, actLabel:'Act 1 — The Trend',
+  title:'🔥 It Actually Went Viral',
+  viral:{ title:'🔥 YOUR VIDEO HIT 180K VIEWS', sub:'#SchoolTakeoverChallenge is trending in Mississippi' },
+  text:`The video exploded overnight. 180K views, 40K likes. New followers flooding in. Your DMs are wild.<br><br>But then... your phone buzzes. It's a text from your mom.`,
+  messages:[
+    { who:'them', name:'Mom 📲', text:'Baby the principal called. Your scholarship coordinator was notified about a "conduct concern." Call me NOW.' }
+  ],
+  consequence:{ type:'warning', title:'⚠️ Fun has a price', text:'180K views felt amazing — but your scholarship coordinator received an email from school administration. The flag goes on your file.', effects:['-Scholarship','+Followers'] },
+  choices:[
+    { icon:'▶', text:'Continue', hint:'', effect:{}, next:'a1_breakup_scene' }
+  ]
+},
+
+{ id:'a1_trend_safe', act:1, actLabel:'Act 1 — The Trend',
+  title:'Smart Play',
+  text:`You post the after-school version. Still fun, no drama. Your followers engage, a few small accounts share it. No admin issues.`,
+  consequence:{ type:'good', title:'✅ Risk-Free Win', text:'You joined the trend without the consequences. Smart and creative.', effects:['+Followers','+Rep'] },
+  choices:[
+    { icon:'▶', text:'Continue', hint:'', effect:{}, next:'a1_breakup_scene' }
+  ]
+},
+
+{ id:'a1_breakup_scene', act:1, actLabel:'Act 1 — Feelings Online',
+  title:'The Breakup Post',
+  text:`Your teammate Devon just broke up with their girlfriend after 8 months. At 11pm, Devon texts you in the group chat:`,
+  messages:[
+    { who:'them', name:'Devon', text:'she really just posted a whole paragraph about me being "emotionally unavailable" 😐' },
+    { who:'them', name:'Devon', text:'should i just expose everything. i got screenshots too' },
+    { who:'them', name:'Kayla💗', text:'DO IT. you deserve to defend yourself' },
+    { who:'me', text:'...' }
+  ],
+  choices:[
+    { icon:'📣', text:'"Go for it. Post everything. She started it."', hint:'Devon\'s your friend and she was wrong.', effect:{ trust:-10, rep:-15, mh:-10 }, flag:'encouraged_drama', next:'a2_intro' },
+    { icon:'💬', text:'"Bro... sleeping on this feels better than posting tonight. Trust."', hint:'Being real with your friend.', effect:{ trust:10, mh:10, rep:5 }, flag:'calmed_devon', next:'a2_intro' },
+    { icon:'😶', text:'Leave the group chat on read. Not getting in this.', hint:'Protecting your peace.', effect:{ mh:5 }, next:'a2_intro' }
+  ]
+},
+
+// ── ACT 2 ──────────────────────────────
+
+{ id:'a2_intro', act:2, actLabel:'Act 2 — The Stakes Rise',
+  title:'Coach Checks Your Feed',
+  text:`It's October. Playoff season. Coach Williams sends the team a group message:`,
+  messages:[
+    { who:'them', name:'Coach Williams', text:'Team — reminder. Scouts from 3 schools are coming to Friday\'s game. They will review your social media profiles BEFORE they speak to you.' },
+    { who:'them', name:'Coach Williams', text:'I\'ve already been asked about two players by name. Make sure your feeds reflect who you WANT to be.' },
+    { who:'them', name:'Coach Williams', text:'More details at practice. Be ready.' }
+  ],
+  text2:`You immediately open your profile. Looking at it through a recruiter\'s eyes... what do they see?`,
+  choices:[
+    { icon:'🧹', text:'Spend an hour cleaning up old posts, memes, and anything questionable', hint:'Damage control mode.', effect:{ sch:15, rep:10 }, flag:'cleaned_profile', next:'a2_fake_acc' },
+    { icon:'📌', text:'Pin your best sports highlights and community service posts', hint:'Showing your best self proactively.', effect:{ sch:20, rep:15 }, flag:'highlighted_profile', next:'a2_fake_acc' },
+    { icon:'🤷', text:'"I\'m just being real. I don\'t fake it for scouts."', hint:'Authenticity matters — but so does context.', effect:{ sch:-10 }, next:'a2_fake_acc' }
+  ]
+},
+
+{ id:'a2_fake_acc', act:2, actLabel:'Act 2 — Impersonation',
+  title:'The Fake Account',
+  text:`Someone made a fake Instagram account using YOUR name and photo. They\'ve been posting offensive jokes, drama about classmates, and tagging your school.<br><br>You found out because three people sent you the same screenshot. Your friend Kayla texts:`,
+  messages:[
+    { who:'them', name:'Kayla💗', text:'jordan who IS this?? people think it\'s you' },
+    { who:'them', name:'Kayla💗', text:'it has your photo and your school tag. this is bad' },
+    { who:'me', text:'that\'s not me i don\'t even know who runs that' },
+    { who:'them', name:'Kayla💗', text:'you need to do something FAST' }
+  ],
+  choices:[
+    { icon:'🚨', text:'Report it to Instagram AND tell your coach and counselor immediately', hint:'Go through official channels.', effect:{ rep:15, sch:10, trust:10 }, flag:'reported_fake', next:'a2_group_leak' },
+    { icon:'📢', text:'Post on your real account calling it out publicly', hint:'Making noise might help — or make it worse.', effect:{ follow:10, rep:-5, mh:-10 }, flag:'public_callout', next:'a2_group_leak' },
+    { icon:'⏳', text:'"It\'ll die down. I\'m not feeding it."', hint:'Waiting it out.', effect:{ rep:-15, sch:-10 }, flag:'ignored_fake', next:'a2_group_leak' }
+  ]
+},
+
+{ id:'a2_group_leak', act:2, actLabel:'Act 2 — Group Chat Leak',
+  title:'The Leaked Screenshot',
+  text:`Your private group chat just got leaked. Someone screenshotted a conversation from 3 months ago where you and your friends were making jokes — some of which were... not it.<br><br>The screenshot is spreading fast. A classmate posted it with the caption: <em>"This is who they REALLY are."</em>`,
+  post:{ avatar:'😤', user:'anonmisshigh', platform:'twitter', handle:'@anonmisshigh', content:'exposing the "role models" at this school. check who you\'re looking up to 🙂 [screenshot]', likes:'1.2K', comments:'234', time:'45min ago' },
+  choices:[
+    { icon:'📝', text:'Post a thoughtful public apology. Own it.', hint:'Taking accountability before you\'re forced to.', effect:{ rep:10, sch:5, mh:-5, trust:5 }, flag:'apologized', next:'a2_recruiter' },
+    { icon:'🔇', text:'Go quiet. Private your accounts temporarily.', hint:'Let it breathe before responding.', effect:{ rep:-5, mh:5 }, flag:'went_quiet', next:'a2_recruiter' },
+    { icon:'😤', text:'Clap back. Expose the person who leaked it.', hint:'Two wrongs...', effect:{ rep:-20, trust:-15, mh:-15, sch:-15 }, flag:'clapped_back', next:'a2_recruiter' }
+  ]
+},
+
+{ id:'a2_recruiter', act:2, actLabel:'Act 2 — The Visit',
+  title:'The Recruiter DM',
+  text:`Coach texts you before Friday\'s game:`,
+  messages:[
+    { who:'them', name:'Coach Williams', text:'Jordan. Got a message from Coach Thompson at State. He wants to meet after the game tonight.' },
+    { who:'them', name:'Coach Williams', text:'He\'s been watching your highlights. This could be the conversation you\'ve been waiting for.' },
+    { who:'me', text:'💪💪 I\'m ready Coach.' },
+    { who:'them', name:'Coach Williams', text:'Also. He mentioned he saw some posts online. Wants to ask about them directly. Be ready to be honest.' }
+  ],
+  text2:`You play the best game of your season. After the game, Coach Thompson pulls you aside. He asks: <em>"Tell me about your social media. What should I know about it?"</em>`,
+  choices:[
+    { icon:'✅', text:'"I\'ve been intentional about what I post. Here\'s my highlight page."', hint:'Prepared and professional.', effect:{ sch:20, rep:15 }, flag:'honest_recruiter', next:'a3_intro' },
+    { icon:'😬', text:'"I had some stuff but I cleaned it up recently."', hint:'Honest but a bit nervous.', effect:{ sch:5 }, next:'a3_intro' },
+    { icon:'🙃', text:'"I mean... I just post whatever. I don\'t really think about it."', hint:'Honest — but not in a good way.', effect:{ sch:-20, rep:-10 }, next:'a3_intro' }
+  ]
+},
+
+// ── ACT 3 ──────────────────────────────
+
+{ id:'a3_intro', act:3, actLabel:'Act 3 — The Future Arrives',
+  title:'College Application Season',
+  text:`It\'s March. Applications are in. Letters are coming.<br><br>But first — a friend sends you a wild screenshot:`,
+  post:{ avatar:'😯', user:'SportsRecruit_Buzz', platform:'twitter', handle:'@SportsRecruitBuzz', content:'BREAKING: Multiple high school athletes in Mississippi lost scholarship offers THIS WEEK due to social media posts from 2+ years ago. Colleges are using AI tools to scan timelines going back years. Your past follows you. 🧵', likes:'42K', comments:'8.1K', time:'3h ago' },
+  choices:[
+    { icon:'🔍', text:'Do a deep audit of your entire online presence right now', hint:'Better late than never.', effect:{ sch:15, rep:10 }, flag:'did_audit', next:'a3_livestream' },
+    { icon:'😰', text:'Panic-delete everything. Wipe your whole account.', hint:'Overreaction might look suspicious too.', effect:{ sch:5, follow:-20, rep:-5 }, next:'a3_livestream' },
+    { icon:'😐', text:'"I\'ve been careful. I\'m not worried."', hint:'Confidence — if it\'s warranted.', effect:{}, next:'a3_livestream' }
+  ]
+},
+
+{ id:'a3_livestream', act:3, actLabel:'Act 3 — Livestream Drama',
+  title:'The Accidental Livestream',
+  text:`During a team celebration, someone accidentally goes LIVE on TikTok instead of just recording. For 4 minutes, the stream picks up the team being rowdy — nothing illegal, but loud, a little messy, some trash talk about the other team.<br><br>It got 8,000 viewers before anyone noticed. Clips are already spreading.`,
+  viral:{ title:'🎥 ACCIDENTAL LIVE GOT 8K VIEWERS', sub:'Clips hitting Twitter. Coaches from 4 schools already saw it.' },
+  choices:[
+    { icon:'📣', text:'Get ahead of it: post a team statement acknowledging the mishap with humor and class', hint:'Control the narrative before it controls you.', effect:{ rep:15, sch:5, trust:10 }, flag:'handled_live', next:'a3_final' },
+    { icon:'🤫', text:'Say nothing and hope it blows over', hint:'Risky.', effect:{ rep:-10, sch:-10 }, next:'a3_final' },
+    { icon:'🎉', text:'"We were celebrating a win. If they don\'t like it, that\'s on them."', hint:'Authentic but could backfire with recruiters.', effect:{ follow:10, sch:-15, rep:-5 }, next:'a3_final' }
+  ]
+},
+
+{ id:'a3_final', act:3, actLabel:'Act 3 — The Decision',
+  title:'The Letter Arrives',
+  text:`It\'s a Tuesday in April. You\'re in 4th period when your phone buzzes.<br><br>An email from the financial aid office at your dream school.<br><br>You stare at the subject line for what feels like forever.<br><br><em>Your hands are shaking. This is it.</em>`,
+  choices:[
+    { icon:'📧', text:'Open the email.', hint:'Whatever it says — you\'ve earned this moment.', effect:{}, next:'__ending' }
+  ]
+}
+
+]; // end scenes array
+
+// ══════════════════════════════════════════
+// CHARACTER-SPECIFIC SCENARIO OVERRIDES
+// Athlete keeps the original path. Streamer, influencer, and new grad get customized posts/messages.
+// ══════════════════════════════════════════
+function cloneScene(scene){
+  return JSON.parse(JSON.stringify(scene));
+}
+
+function getSceneForChar(id){
+  var base = scenes.find(s=>s.id===id);
+  if(!base) return null;
+  if(state.char === 'athlete') return base;
+  var scene = cloneScene(base);
+  var v = sceneVariants[state.char] && sceneVariants[state.char][id];
+  if(v){
+    Object.assign(scene, v);
+  }
+  return scene;
+}
+
+var sceneVariants = {
+  gamer: {
+    a1_intro: {
+      title:'The Clip That Got Shared',
+      text:`It's the first week of school. Your stream highlights are finally gaining traction. A clip of your best clutch play hit <em>semi-viral</em> in your city.<br><br>Then another streamer posts a Story throwing serious shade at your esports coach and your school team.`,
+      post:{ avatar:'😤', user:'PixelAce', platform:'insta', handle:'@pixelace_live', content:'ngl our esports coach has NO clue what he is doing. we win in spite of him, not because of him 💀🎮', likes:'312', comments:'87', time:'2h ago' },
+      choices:[
+        { icon:'🔁', text:'React with 😂 and reply "facts tho"', hint:'It feels funny in the moment.', effect:{ trust:-15, rep:-10, sch:-5 }, flag:'reacted_marcus', next:'a1_marcus_coach' },
+        { icon:'😶', text:'Scroll past. Not your drama.', hint:'Not every post needs your reaction.', effect:{ trust:5, rep:5 }, flag:'ignored_marcus', next:'a1_tiktok' },
+        { icon:'📲', text:'DM them privately: "delete this before screenshots spread"', hint:'Looking out without making it public.', effect:{ trust:10, rep:5, mh:5 }, flag:'warned_marcus', next:'a1_marcus_warned' }
+      ]
+    },
+    a1_marcus_warned: {
+      title:'PixelAce Texts Back',
+      text:`PixelAce answers right away:`,
+      messages:[
+        { who:'them', name:'PixelAce', text:'bro it is just a story. nobody important follows me' },
+        { who:'them', name:'PixelAce', text:'also people love drama. it helps views lol' },
+        { who:'me', text:'views are not worth burning your team reputation.' },
+        { who:'them', name:'PixelAce', text:'...fine. deleting it.' }
+      ],
+      consequence:{ type:'good', title:'🤝 Smart Move', text:'The post came down before it spread. You protected your team and your stream brand.', effects:['+Trust','+Rep'] }
+    },
+    a1_marcus_coach: {
+      title:'The Screenshot Reaches the Team',
+      text:`Two days later, your esports coach brings it up at practice. Someone screenshotted the exchange — including YOUR laughing reaction — and shared it in the team Discord.`,
+      consequence:{ type:'bad', title:'📸 Screenshot Caught', text:'Your reaction made you look unprofessional. Your coach and teammates are watching how you act online.', effects:['-Team Trust','-Scholarship'] }
+    },
+    a1_tiktok: {
+      title:'The Rage Clip Trend',
+      text:`A new TikTok trend is blowing up: <strong>#RageQuitChallenge</strong>. Streamers post exaggerated rage moments, keyboard slams, and toxic callouts for laughs.<br><br>Your Discord starts blowing up:`,
+      messages:[
+        { who:'them', name:'Nova', text:'RILEY you HAVE to do the rage quit trend 😂' },
+        { who:'them', name:'T-Smooth', text:'make it unhinged. those clips go crazy' },
+        { who:'them', name:'Nova', text:'just roast the randoms. everyone does it.' }
+      ],
+      choices:[
+        { icon:'🎬', text:'Post a toxic rage clip roasting other players', hint:'Views might spike, but brands may not love it.', effect:{ follow:15, rep:10, sch:-20, mh:5 }, flag:'did_trend', next:'a1_trend_result' },
+        { icon:'📹', text:'Post a funny fake rage clip with no real insults', hint:'Same trend, safer execution.', effect:{ follow:8, rep:5 }, flag:'safe_trend', next:'a1_trend_safe' },
+        { icon:'🚫', text:'Skip it. You want your stream to stay welcoming.', hint:'Protecting the community you are building.', effect:{ trust:5, sch:5, mh:5 }, flag:'skipped_trend', next:'a1_breakup_scene' }
+      ]
+    },
+    a1_trend_result: {
+      title:'🔥 The Clip Took Off',
+      viral:{ title:'🔥 YOUR RAGE CLIP HIT 180K VIEWS', sub:'#RageQuitChallenge is trending in gaming TikTok' },
+      text:`The clip exploded overnight. 180K views, 40K likes, new followers everywhere.<br><br>Then your phone buzzes. It is a message from a small gaming sponsor you were hoping to work with.`,
+      messages:[{ who:'them', name:'Sponsor Rep', text:'Hi Riley. We saw the clip from last night. We need to pause partnership talks while our team reviews brand safety.' }],
+      consequence:{ type:'warning', title:'⚠️ Views have a price', text:'The viral moment brought attention, but it also raised concerns about toxicity and brand safety.', effects:['-Scholarship','+Followers'] }
+    },
+    a1_trend_safe: {
+      title:'Funny Without Being Toxic',
+      text:`You post the fake rage version. It is obviously a joke, no real player gets targeted, and your chat starts quoting it.`,
+      consequence:{ type:'good', title:'✅ Brand-Safe Win', text:'You joined the trend without hurting your community or future sponsorships.', effects:['+Followers','+Rep'] }
+    },
+    a1_breakup_scene: {
+      title:'The Discord Drama',
+      text:`A teammate just lost a ranked match and is furious. They want to post screenshots blaming another player for everything.<br><br>The group chat lights up:`,
+      messages:[
+        { who:'them', name:'PixelAce', text:'i swear i am posting the screenshots. people need to know this player is trash' },
+        { who:'them', name:'Nova', text:'DO IT. expose them' },
+        { who:'me', text:'...' }
+      ],
+      choices:[
+        { icon:'📣', text:'"Post it. They deserve it."', hint:'It feels loyal, but it fuels harassment.', effect:{ trust:-10, rep:-15, mh:-10 }, flag:'encouraged_drama', next:'a2_intro' },
+        { icon:'💬', text:'"Take a break first. Do not post while mad."', hint:'Helping your friend cool down.', effect:{ trust:10, mh:10, rep:5 }, flag:'calmed_devon', next:'a2_intro' },
+        { icon:'😶', text:'Leave it on read. Not your fight.', hint:'Protecting your peace.', effect:{ mh:5 }, next:'a2_intro' }
+      ]
+    },
+    a2_intro: {
+      title:'Sponsor Checks Your Feed',
+      text:`It is October. Your channel is growing fast. A gaming chair company sends you a message:`,
+      messages:[
+        { who:'them', name:'Brand Rep', text:'Hi Riley — we like your content and want to discuss a student creator partnership.' },
+        { who:'them', name:'Brand Rep', text:'Before we schedule a call, our team reviews public posts, clips, and chat behavior.' },
+        { who:'them', name:'Brand Rep', text:'Please send your media kit and main social links.' }
+      ],
+      text2:`You open your profiles. Looking at them through a sponsor's eyes... what do they see?`,
+      choices:[
+        { icon:'🧹', text:'Clean up old toxic clips, jokes, and messy comments', hint:'Damage control mode.', effect:{ sch:15, rep:10 }, flag:'cleaned_profile', next:'a2_fake_acc' },
+        { icon:'📌', text:'Pin your best clips, community rules, and positive collabs', hint:'Showing your creator brand proactively.', effect:{ sch:20, rep:15 }, flag:'highlighted_profile', next:'a2_fake_acc' },
+        { icon:'🤷', text:'"I am just real on stream. Sponsors can deal with it."', hint:'Authenticity matters — but so does professionalism.', effect:{ sch:-10 }, next:'a2_fake_acc' }
+      ]
+    },
+    a2_fake_acc: {
+      title:'The Fake Account',
+      text:`Someone made a fake account using your stream name and profile photo. They are posting offensive clips, fake DMs, and tagging your school and sponsors.<br><br>Your mod texts you:`,
+      messages:[
+        { who:'them', name:'Mod Sam', text:'Riley who is this account?? people think it is you' },
+        { who:'them', name:'Mod Sam', text:'they used your logo and are tagging brands. this is bad' },
+        { who:'me', text:'that is not me. i need to handle it now.' }
+      ]
+    },
+    a2_group_leak: {
+      title:'The Leaked Discord Screenshot',
+      text:`A private Discord screenshot from months ago just got leaked. Some jokes in it are not okay, and people are tagging your channel.<br><br>A gaming account posts it with the caption: <em>"This creator's community is not as wholesome as they pretend."</em>`,
+      post:{ avatar:'😤', user:'gamingwatchdog', platform:'twitter', handle:'@gamingwatchdog', content:'creator accountability matters. screenshots from a streamer Discord are circulating and sponsors should pay attention. [screenshot]', likes:'1.2K', comments:'234', time:'45min ago' }
+    },
+    a2_recruiter: {
+      title:'The Sponsor Call',
+      text:`Your inbox finally gets the message:`,
+      messages:[
+        { who:'them', name:'Brand Rep', text:'Riley, we reviewed your channel and would like to meet after your next stream.' },
+        { who:'them', name:'Brand Rep', text:'Your gameplay is strong. We also want to ask about some clips and Discord screenshots.' },
+        { who:'me', text:'I understand. I am ready to talk about it.' }
+      ],
+      text2:`After stream, the rep asks: <em>"Tell me about your online community. How do you handle harmful posts or comments?"</em>`,
+      choices:[
+        { icon:'✅', text:'"I set clear rules, moderate chat, and pin positive content."', hint:'Prepared and professional.', effect:{ sch:20, rep:15 }, flag:'honest_recruiter', next:'a3_intro' },
+        { icon:'😬', text:'"I made some mistakes, but I cleaned things up recently."', hint:'Honest but still rebuilding trust.', effect:{ sch:5 }, next:'a3_intro' },
+        { icon:'🙃', text:'"It is the internet. People are too sensitive."', hint:'Honest — but not professional.', effect:{ sch:-20, rep:-10 }, next:'a3_intro' }
+      ]
+    },
+    a3_intro: {
+      title:'Creator Opportunity Season',
+      text:`It is March. Partnership emails, internship applications, and scholarship forms are all happening at once.<br><br>Then a friend sends you a screenshot:`,
+      post:{ avatar:'😯', user:'CreatorNews_Buzz', platform:'twitter', handle:'@CreatorNewsBuzz', content:'BREAKING: Student creators are losing brand deals after old toxic clips and Discord screenshots resurface. Your past content is part of your media kit. 🧵', likes:'42K', comments:'8.1K', time:'3h ago' }
+    },
+    a3_livestream: {
+      title:'The Accidental Livestream',
+      text:`After a big win, you forget the stream is still live. For four minutes, chat hears the team being loud, messy, and trash-talking another group.<br><br>It got 8,000 viewers before anyone noticed. Clips are already spreading.`,
+      viral:{ title:'🎥 ACCIDENTAL LIVE GOT 8K VIEWERS', sub:'Clips hitting TikTok and Discord. Sponsors already saw it.' },
+      choices:[
+        { icon:'📣', text:'Post a quick statement with humor, accountability, and clear community standards', hint:'Control the narrative before it controls you.', effect:{ rep:15, sch:5, trust:10 }, flag:'handled_live', next:'a3_final' },
+        { icon:'🤫', text:'Say nothing and hope it blows over', hint:'Risky.', effect:{ rep:-10, sch:-10 }, next:'a3_final' },
+        { icon:'🎉', text:'"We were just celebrating. People need to chill."', hint:'Could backfire with sponsors.', effect:{ follow:10, sch:-15, rep:-5 }, next:'a3_final' }
+      ]
+    },
+    a3_final: {
+      title:'The Email Arrives',
+      text:`It is a Tuesday afternoon. You are editing clips when your phone buzzes.<br><br>An email from the brand partnership team.<br><br>You stare at the subject line for what feels like forever.<br><br><em>Your hands are shaking. This is it.</em>`
+    }
+  },
+
+  influencer: {
+    a1_intro: {
+      title:'The Collab Opportunity',
+      text:`It's the first week of school. Your GRWM video hit <em>semi-viral</em>, and small brands are starting to notice you.<br><br>Then another creator posts a Story dragging a local boutique that sent you both free products.`,
+      post:{ avatar:'😤', user:'LolaLooks', platform:'insta', handle:'@lolalooks', content:'some brands really send cheap PR then expect us to act grateful 😭 this boutique is embarrassing fr', likes:'1.8K', comments:'230', time:'2h ago' },
+      choices:[
+        { icon:'🔁', text:'React with 😂 and comment "no literally"', hint:'It feels relatable, but the brand may see it.', effect:{ trust:-15, rep:-10, sch:-5 }, flag:'reacted_marcus', next:'a1_marcus_coach' },
+        { icon:'😶', text:'Scroll past. Not your drama.', hint:'Not every post needs your reaction.', effect:{ trust:5, rep:5 }, flag:'ignored_marcus', next:'a1_tiktok' },
+        { icon:'📲', text:'DM Lola privately: "take it down before the brand screenshots it"', hint:'Looking out without making it public.', effect:{ trust:10, rep:5, mh:5 }, flag:'warned_marcus', next:'a1_marcus_warned' }
+      ]
+    },
+    a1_marcus_warned: {
+      title:'Lola Texts Back',
+      text:`Lola answers immediately:`,
+      messages:[
+        { who:'them', name:'LolaLooks', text:'girl brands need to learn. they cannot just send anything' },
+        { who:'them', name:'LolaLooks', text:'also drama gets engagement 😭' },
+        { who:'me', text:'true but screenshots can kill future collabs.' },
+        { who:'them', name:'LolaLooks', text:'ugh fine deleting it' }
+      ],
+      consequence:{ type:'good', title:'🤝 Smart Move', text:'Lola deleted the Story. You protected a creator relationship and your own brand image.', effects:['+Trust','+Rep'] }
+    },
+    a1_marcus_coach: {
+      title:'The Brand Saw It',
+      text:`Three days later, the boutique emails creators about "professional communication." Someone screenshotted the Story — including YOUR reaction — and sent it to them.`,
+      consequence:{ type:'bad', title:'📸 Screenshot Caught', text:'Your reaction made you look risky to work with. Brands remember creators who add fuel to public drama.', effects:['-Trust','-Scholarship'] }
+    },
+    a1_tiktok: {
+      title:'The Hot Take Trend',
+      text:`A new TikTok trend is blowing up: <strong>#UnfilteredReview</strong>. Creators post brutal reviews of products for shock value.<br><br>Your group chat starts blowing up:`,
+      messages:[
+        { who:'them', name:'LolaLooks', text:'MAYA do the unfiltered review trend omg' },
+        { who:'them', name:'T-Smooth', text:'be messy. people love honesty' },
+        { who:'them', name:'LolaLooks', text:'it is literally just content' }
+      ],
+      choices:[
+        { icon:'🎬', text:'Post a harsh review and tag the brand', hint:'It may go viral, but future brands are watching.', effect:{ follow:15, rep:10, sch:-20, mh:5 }, flag:'did_trend', next:'a1_trend_result' },
+        { icon:'📹', text:'Post a fair review: pros, cons, and who it might work for', hint:'Honest without being cruel.', effect:{ follow:8, rep:5 }, flag:'safe_trend', next:'a1_trend_safe' },
+        { icon:'🚫', text:'Skip it. Your brand is positive and helpful.', hint:'Protecting your long-term image.', effect:{ trust:5, sch:5, mh:5 }, flag:'skipped_trend', next:'a1_breakup_scene' }
+      ]
+    },
+    a1_trend_result: {
+      title:'🔥 The Review Went Viral',
+      viral:{ title:'🔥 YOUR REVIEW HIT 180K VIEWS', sub:'#UnfilteredReview is trending on TikTok' },
+      text:`The review exploded overnight. 180K views, 40K likes, new followers everywhere.<br><br>Then your phone buzzes. A brand manager emails you.`,
+      messages:[{ who:'them', name:'Brand Manager', text:'Hi Maya. We saw your recent review. We are pausing the campaign conversation while our team evaluates brand fit.' }],
+      consequence:{ type:'warning', title:'⚠️ Attention has a price', text:'The viral moment brought followers, but it also made brands question whether you handle feedback professionally.', effects:['-Scholarship','+Followers'] }
+    },
+    a1_trend_safe: {
+      title:'Helpful, Not Hurtful',
+      text:`You post a balanced review. People comment that it feels honest and useful, and the brand thanks you for being professional.`,
+      consequence:{ type:'good', title:'✅ Trust-Building Win', text:'You joined the trend without burning bridges. Your audience sees you as credible.', effects:['+Followers','+Rep'] }
+    },
+    a1_breakup_scene: {
+      title:'The Exposé Temptation',
+      text:`A creator friend gets dropped from a collab and wants to post screenshots exposing the brand manager.<br><br>The group chat lights up:`,
+      messages:[
+        { who:'them', name:'LolaLooks', text:'i have screenshots. should i expose them?' },
+        { who:'them', name:'Kayla💗', text:'DO IT. brands need to learn' },
+        { who:'me', text:'...' }
+      ],
+      choices:[
+        { icon:'📣', text:'"Post everything. They deserve it."', hint:'It may feel like justice, but it escalates fast.', effect:{ trust:-10, rep:-15, mh:-10 }, flag:'encouraged_drama', next:'a2_intro' },
+        { icon:'💬', text:'"Sleep on it first. Protect your peace and your proof."', hint:'Being real with your friend.', effect:{ trust:10, mh:10, rep:5 }, flag:'calmed_devon', next:'a2_intro' },
+        { icon:'😶', text:'Leave the group chat on read. Not getting in this.', hint:'Protecting your peace.', effect:{ mh:5 }, next:'a2_intro' }
+      ]
+    },
+    a2_intro: {
+      title:'Brand Checks Your Feed',
+      text:`It's October. A skincare brand sends you a campaign email:`,
+      messages:[
+        { who:'them', name:'Campaign Lead', text:'Hi Maya — we love your content and want to discuss a paid creator campaign.' },
+        { who:'them', name:'Campaign Lead', text:'Before the call, our team reviews public posts, comments, and past brand interactions.' },
+        { who:'them', name:'Campaign Lead', text:'Please send your media kit and social links.' }
+      ],
+      text2:`You open your profile. Looking at it through a brand's eyes... what do they see?`,
+      choices:[
+        { icon:'🧹', text:'Clean up old messy comments, subtweets, and questionable jokes', hint:'Damage control mode.', effect:{ sch:15, rep:10 }, flag:'cleaned_profile', next:'a2_fake_acc' },
+        { icon:'📌', text:'Pin your best reviews, community work, and clear disclosure policy', hint:'Showing professionalism proactively.', effect:{ sch:20, rep:15 }, flag:'highlighted_profile', next:'a2_fake_acc' },
+        { icon:'🤷', text:'"I am just authentic. Brands can take it or leave it."', hint:'Authenticity matters — but so does trust.', effect:{ sch:-10 }, next:'a2_fake_acc' }
+      ]
+    },
+    a2_fake_acc: {
+      title:'The Fake Account',
+      text:`Someone made a fake account using your name and photos. They are posting offensive jokes and fake brand complaints while tagging companies you want to work with.<br><br>Your friend texts:`,
+      messages:[
+        { who:'them', name:'LolaLooks', text:'maya who IS this?? people think it is you' },
+        { who:'them', name:'LolaLooks', text:'it has your photo and it is tagging brands. this is bad' },
+        { who:'me', text:'that is not me. i need to report it now.' }
+      ]
+    },
+    a2_group_leak: {
+      title:'The Leaked Close Friends Screenshot',
+      text:`A Close Friends screenshot from months ago just got leaked. Some jokes and comments are not brand-safe.<br><br>A gossip page posts it with the caption: <em>"This is who influencers are when brands are not watching."</em>`,
+      post:{ avatar:'😤', user:'creatorwatch', platform:'twitter', handle:'@creatorwatch', content:'screenshots from a local influencer close friends story are circulating. brands should always check digital history. [screenshot]', likes:'1.2K', comments:'234', time:'45min ago' }
+    },
+    a2_recruiter: {
+      title:'The Brand Call',
+      text:`The campaign lead messages you before the call:`,
+      messages:[
+        { who:'them', name:'Campaign Lead', text:'Maya, we reviewed your recent content and still want to meet.' },
+        { who:'them', name:'Campaign Lead', text:'We also saw some screenshots online and want to ask about them directly.' },
+        { who:'me', text:'Thank you. I am ready to be honest about it.' }
+      ],
+      text2:`On the call, they ask: <em>"How do you handle criticism, transparency, and mistakes as a creator?"</em>`,
+      choices:[
+        { icon:'✅', text:'"I disclose partnerships, give fair reviews, and address mistakes directly."', hint:'Prepared and professional.', effect:{ sch:20, rep:15 }, flag:'honest_recruiter', next:'a3_intro' },
+        { icon:'😬', text:'"I had some messy moments, but I cleaned things up recently."', hint:'Honest but a bit nervous.', effect:{ sch:5 }, next:'a3_intro' },
+        { icon:'🙃', text:'"People screenshot everything. It is not that serious."', hint:'Honest — but not professional.', effect:{ sch:-20, rep:-10 }, next:'a3_intro' }
+      ]
+    },
+    a3_intro: {
+      title:'Campaign Season',
+      text:`It is March. Paid campaigns, internships, and scholarship applications are all happening at once.<br><br>Then a friend sends you a screenshot:`,
+      post:{ avatar:'😯', user:'InfluencerNews_Buzz', platform:'twitter', handle:'@InfluencerNewsBuzz', content:'BREAKING: Student influencers are losing campaign offers after old posts and private story screenshots resurface. Your digital footprint is part of your portfolio. 🧵', likes:'42K', comments:'8.1K', time:'3h ago' }
+    },
+    a3_livestream: {
+      title:'The Accidental Live',
+      text:`During a creator hangout, someone accidentally goes LIVE instead of recording. For 4 minutes, the stream catches jokes about other creators and a few messy comments.<br><br>It got 8,000 viewers before anyone noticed. Clips are already spreading.`,
+      viral:{ title:'🎥 ACCIDENTAL LIVE GOT 8K VIEWERS', sub:'Clips hitting TikTok. Brands and classmates already saw it.' },
+      choices:[
+        { icon:'📣', text:'Post a calm statement: own the mistake, apologize, and reset your standards', hint:'Control the narrative before it controls you.', effect:{ rep:15, sch:5, trust:10 }, flag:'handled_live', next:'a3_final' },
+        { icon:'🤫', text:'Say nothing and hope it blows over', hint:'Risky.', effect:{ rep:-10, sch:-10 }, next:'a3_final' },
+        { icon:'🎉', text:'"It was just jokes. People are too sensitive."', hint:'Could backfire with brands.', effect:{ follow:10, sch:-15, rep:-5 }, next:'a3_final' }
+      ]
+    },
+    a3_final: {
+      title:'The Campaign Email Arrives',
+      text:`It is a Tuesday afternoon. You are filming a GRWM when your phone buzzes.<br><br>An email from the campaign team.<br><br>You stare at the subject line for what feels like forever.<br><br><em>Your hands are shaking. This is it.</em>`
+    }
+  },
+
+  newgrad: {
+    a1_intro: {
+      title:'The LinkedIn Glow-Up',
+      text:`It is your first month after graduation. You updated LinkedIn, posted your portfolio, and started applying for jobs.<br><br>Then a former classmate posts a Story dragging a professor and a campus program you were part of.`,
+      post:{ avatar:'😤', user:'GradTalks', platform:'insta', handle:'@gradtalks', content:'some programs love to say they prepare students for careers but half the classes were a waste of time lol 🚮', likes:'312', comments:'87', time:'2h ago' },
+      choices:[
+        { icon:'🔁', text:'React with 😂 and reply "too real"', hint:'It feels honest, but employers may see it.', effect:{ trust:-15, rep:-10, sch:-5 }, flag:'reacted_marcus', next:'a1_marcus_coach' },
+        { icon:'😶', text:'Scroll past. Not your drama.', hint:'Not every post needs your reaction.', effect:{ trust:5, rep:5 }, flag:'ignored_marcus', next:'a1_tiktok' },
+        { icon:'📲', text:'DM them privately: "be careful — recruiters check public posts"', hint:'Looking out without making it public.', effect:{ trust:10, rep:5, mh:5 }, flag:'warned_marcus', next:'a1_marcus_warned' }
+      ]
+    },
+    a1_marcus_warned: {
+      title:'Your Classmate Replies',
+      text:`Your classmate answers right away:`,
+      messages:[
+        { who:'them', name:'GradTalks', text:'lol nobody hiring me follows my story' },
+        { who:'them', name:'GradTalks', text:'also i am just being honest' },
+        { who:'me', text:'honest is good. public rant before interviews is risky.' },
+        { who:'them', name:'GradTalks', text:'...fair. deleting it.' }
+      ],
+      consequence:{ type:'good', title:'🤝 Smart Move', text:'The post came down before it spread. You protected your classmate and your professional circle.', effects:['+Trust','+Rep'] }
+    },
+    a1_marcus_coach: {
+      title:'The Screenshot Travels',
+      text:`Three days later, an alumni mentor messages you. Someone screenshotted the Story — including YOUR laughing reaction — and shared it in a career group.`,
+      consequence:{ type:'bad', title:'📸 Screenshot Caught', text:'Your reaction made you look unprofessional. The network you need is smaller than it seems.', effects:['-Trust','-Scholarship'] }
+    },
+    a1_tiktok: {
+      title:'The Workplace Tea Trend',
+      text:`A TikTok trend is blowing up: <strong>#WorkplaceRedFlags</strong>. New grads share messy stories about internships, bosses, and classmates.<br><br>Your friends start texting:`,
+      messages:[
+        { who:'them', name:'Kayla💗', text:'DEVIN you have so many internship stories. do the trend 😂' },
+        { who:'them', name:'T-Smooth', text:'drop names. people love workplace tea' },
+        { who:'them', name:'Kayla💗', text:'it is just TikTok. companies do not care' }
+      ],
+      choices:[
+        { icon:'🎬', text:'Post a spicy story with enough details that people can guess the company', hint:'Views might spike, but employers may not love it.', effect:{ follow:15, rep:10, sch:-20, mh:5 }, flag:'did_trend', next:'a1_trend_result' },
+        { icon:'📹', text:'Post a lesson learned with no names or identifying details', hint:'Helpful and professional.', effect:{ follow:8, rep:5 }, flag:'safe_trend', next:'a1_trend_safe' },
+        { icon:'🚫', text:'Skip it. Your job search matters more than viral tea.', hint:'Protecting future opportunities.', effect:{ trust:5, sch:5, mh:5 }, flag:'skipped_trend', next:'a1_breakup_scene' }
+      ]
+    },
+    a1_trend_result: {
+      title:'🔥 The Workplace Tea Went Viral',
+      viral:{ title:'🔥 YOUR POST HIT 180K VIEWS', sub:'#WorkplaceRedFlags is trending on TikTok' },
+      text:`The video exploded overnight. 180K views, 40K likes, new followers everywhere.<br><br>Then your phone buzzes. It is an email from a recruiter you recently interviewed with.`,
+      messages:[{ who:'them', name:'Recruiter', text:'Hi Devin. We saw a recent post that appears to reference a workplace experience. We need to revisit your candidacy with the hiring team.' }],
+      consequence:{ type:'warning', title:'⚠️ Viral can affect hiring', text:'The post brought attention, but it also made employers question your judgment and confidentiality.', effects:['-Scholarship','+Followers'] }
+    },
+    a1_trend_safe: {
+      title:'Professional and Still Real',
+      text:`You post a reflective version focused on what you learned. People relate to it, and a mentor comments that it shows maturity.`,
+      consequence:{ type:'good', title:'✅ Career-Safe Win', text:'You joined the trend while protecting privacy and professionalism.', effects:['+Followers','+Rep'] }
+    },
+    a1_breakup_scene: {
+      title:'The Group Chat Rant',
+      text:`A friend just got rejected from a job and wants to post screenshots of the recruiter email with a furious caption.<br><br>The group chat lights up:`,
+      messages:[
+        { who:'them', name:'Alex', text:'should i post this recruiter email and tag the company?' },
+        { who:'them', name:'Kayla💗', text:'DO IT. they wasted your time' },
+        { who:'me', text:'...' }
+      ],
+      choices:[
+        { icon:'📣', text:'"Post it. Companies need to be called out."', hint:'Maybe, but this can escalate fast.', effect:{ trust:-10, rep:-15, mh:-10 }, flag:'encouraged_drama', next:'a2_intro' },
+        { icon:'💬', text:'"Wait until tomorrow. Vent privately first."', hint:'Helping your friend cool down.', effect:{ trust:10, mh:10, rep:5 }, flag:'calmed_devon', next:'a2_intro' },
+        { icon:'😶', text:'Leave the group chat on read. Not getting in this.', hint:'Protecting your peace.', effect:{ mh:5 }, next:'a2_intro' }
+      ]
+    },
+    a2_intro: {
+      title:'Employer Checks Your Feed',
+      text:`It is October. You get a message about a role you really want:`,
+      messages:[
+        { who:'them', name:'Hiring Manager', text:'Hi Devin — we reviewed your application and would like to schedule a final interview.' },
+        { who:'them', name:'Hiring Manager', text:'As part of our process, we review public professional profiles and online presence.' },
+        { who:'them', name:'Hiring Manager', text:'Please send your portfolio and LinkedIn.' }
+      ],
+      text2:`You open your profile. Looking at it through an employer's eyes... what do they see?`,
+      choices:[
+        { icon:'🧹', text:'Clean up old rants, jokes, and messy comments', hint:'Damage control mode.', effect:{ sch:15, rep:10 }, flag:'cleaned_profile', next:'a2_fake_acc' },
+        { icon:'📌', text:'Pin your portfolio, project wins, and volunteer work', hint:'Showing your best self proactively.', effect:{ sch:20, rep:15 }, flag:'highlighted_profile', next:'a2_fake_acc' },
+        { icon:'🤷', text:'"I am just being real. Employers should not judge my posts."', hint:'Authenticity matters — but so does context.', effect:{ sch:-10 }, next:'a2_fake_acc' }
+      ]
+    },
+    a2_fake_acc: {
+      title:'The Fake Account',
+      text:`Someone made a fake account using your name and graduation photo. They are posting offensive jokes, fake workplace rants, and tagging companies.<br><br>Your friend texts:`,
+      messages:[
+        { who:'them', name:'Kayla💗', text:'devin who IS this?? it looks like you' },
+        { who:'them', name:'Kayla💗', text:'they used your grad photo and tagged employers. this is bad' },
+        { who:'me', text:'that is not me. i need to handle it now.' }
+      ]
+    },
+    a2_group_leak: {
+      title:'The Leaked Group Chat Screenshot',
+      text:`A private group chat screenshot from months ago just got leaked. Some jokes about internships and classmates are not professional.<br><br>A campus account posts it with the caption: <em>"This is who applicants are when employers are not watching."</em>`,
+      post:{ avatar:'😤', user:'campuscareerwatch', platform:'twitter', handle:'@campuscareerwatch', content:'screenshots from a new grad group chat are circulating. employers should know who they are hiring. [screenshot]', likes:'1.2K', comments:'234', time:'45min ago' }
+    },
+    a2_recruiter: {
+      title:'The Final Interview',
+      text:`Before your final interview, the hiring manager emails:`,
+      messages:[
+        { who:'them', name:'Hiring Manager', text:'Devin, we are excited to speak with you.' },
+        { who:'them', name:'Hiring Manager', text:'We also saw some online posts and would like to ask about your digital professionalism.' },
+        { who:'me', text:'Thank you. I am prepared to discuss it.' }
+      ],
+      text2:`In the interview, they ask: <em>"How do you think about professionalism online?"</em>`,
+      choices:[
+        { icon:'✅', text:'"I use my online presence to show projects, growth, and respect."', hint:'Prepared and professional.', effect:{ sch:20, rep:15 }, flag:'honest_recruiter', next:'a3_intro' },
+        { icon:'😬', text:'"I had some old posts, but I cleaned them up recently."', hint:'Honest but a bit nervous.', effect:{ sch:5 }, next:'a3_intro' },
+        { icon:'🙃', text:'"I do not really think social media should matter for jobs."', hint:'Honest — but not in a good way.', effect:{ sch:-20, rep:-10 }, next:'a3_intro' }
+      ]
+    },
+    a3_intro: {
+      title:'Offer Season',
+      text:`It is March. Applications, interviews, and emails are all coming in.<br><br>Then a friend sends you a screenshot:`,
+      post:{ avatar:'😯', user:'CareerNews_Buzz', platform:'twitter', handle:'@CareerNewsBuzz', content:'BREAKING: New grads are losing job offers after old posts and group chat screenshots resurface during hiring checks. Your online presence is part of your interview. 🧵', likes:'42K', comments:'8.1K', time:'3h ago' }
+    },
+    a3_livestream: {
+      title:'The Accidental Live',
+      text:`At a graduation party, someone accidentally goes LIVE instead of recording. For 4 minutes, the stream catches people joking about employers, classmates, and internships.<br><br>It got 8,000 viewers before anyone noticed. Clips are already spreading.`,
+      viral:{ title:'🎥 ACCIDENTAL LIVE GOT 8K VIEWERS', sub:'Clips hitting TikTok and LinkedIn. Recruiters already saw it.' },
+      choices:[
+        { icon:'📣', text:'Get ahead of it: post a mature clarification and take responsibility', hint:'Control the narrative before it controls you.', effect:{ rep:15, sch:5, trust:10 }, flag:'handled_live', next:'a3_final' },
+        { icon:'🤫', text:'Say nothing and hope it blows over', hint:'Risky.', effect:{ rep:-10, sch:-10 }, next:'a3_final' },
+        { icon:'🎉', text:'"It was a party. Employers need to relax."', hint:'Could backfire with hiring teams.', effect:{ follow:10, sch:-15, rep:-5 }, next:'a3_final' }
+      ]
+    },
+    a3_final: {
+      title:'The Offer Email Arrives',
+      text:`It is a Tuesday afternoon. You are checking your inbox between applications.<br><br>An email from the company you wanted most appears.<br><br>You stare at the subject line for what feels like forever.<br><br><em>Your hands are shaking. This is it.</em>`
+    }
+  }
+};
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function goToCharSelect(){
+  show('charSelect');
+  show('splash',false);
+}
+function selectChar(c){
+  state.char = c;
+  document.querySelectorAll('.char-card').forEach(el=>el.classList.remove('selected'));
+  document.querySelector(`[data-char="${c}"]`).classList.add('selected');
+  document.getElementById('csBtn').classList.add('ready');
+}
+function startGame(){
+  if(!state.char) return;
+  var c = chars[state.char];
+  state.meters = {rep:70,sch:65,trust:80,follow:40,mh:75};
+  state.followersDisplay = c.followBase;
+  state.flags = {};
+  state.act = 1;
+  state.sceneIdx = 0;
+  state.delayedConsequences = [];
+  // Set dashboard
+  document.getElementById('dashAvatar').textContent = c.emoji;
+  document.getElementById('dashName').textContent = c.name;
+  document.getElementById('dashTitle').textContent = c.title;
+  // Adjust meters per character
+  if(state.char==='influencer'){state.meters.follow=80;state.meters.rep=75;}
+  if(state.char==='gamer'){state.meters.mh=65;}
+  if(state.char==='newgrad'){state.meters.sch=80;state.meters.trust=85;}
+  updateMeters();
+  show('charSelect',false);
+  show('game');
+  loadScene('a1_intro');
+}
+
+function show(id,visible=true){
+  var el = document.getElementById(id);
+  if(visible){ el.classList.add('active'); }
+  else { el.classList.remove('active'); }
+}
+
+// ══════════════════════════════════════════
+// SCENE ENGINE
+// ══════════════════════════════════════════
+function loadScene(id){
+  if(id==='__ending'){ showEnding(); return; }
+  var scene = getSceneForChar(id);
+  if(!scene){ showEnding(); return; }
+  state.act = scene.act;
+  document.getElementById('actBadge').textContent = scene.actLabel;
+  var panel = document.getElementById('storyPanel');
+  panel.innerHTML = '';
+  // Act label
+  var al = document.createElement('div');
+  al.className='act-label'; al.textContent=scene.actLabel;
+  panel.appendChild(al);
+  // Title
+  var tl = document.createElement('div');
+  tl.className='story-title'; tl.textContent=scene.title;
+  panel.appendChild(tl);
+  // Text
+  var tx = document.createElement('div');
+  tx.className='story-text'; tx.innerHTML = scene.text || '';
+  panel.appendChild(tx);
+  // Social post
+  if(scene.post) panel.appendChild(buildPost(scene.post));
+  // Messages
+  if(scene.messages) panel.appendChild(buildMessages(scene.messages));
+  // Viral banner
+  if(scene.viral) panel.appendChild(buildViral(scene.viral));
+  // Consequence
+  if(scene.consequence) panel.appendChild(buildConsequence(scene.consequence));
+  // Text2
+  if(scene.text2){
+    var tx2=document.createElement('div');
+    tx2.className='story-text';tx2.style.marginTop='12px';
+    tx2.innerHTML=scene.text2; panel.appendChild(tx2);
+  }
+  // Choices
+  buildChoices(scene.choices);
+  // Scroll to top
+  document.getElementById('game').scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildPost(p){
+  var d = document.createElement('div');
+  d.className='social-post';
+  var platClass = 'plat-'+p.platform;
+  var platLabel = {tiktok:'TikTok',insta:'Instagram',snap:'Snapchat',twitter:'X'}[p.platform]||p.platform;
+  var mediaLabel = p.media || '';
+  if(!mediaLabel){
+    if((p.content||'').toLowerCase().includes('screenshot')) mediaLabel='Screenshot attached';
+    else if(p.platform==='tiktok') mediaLabel='Video post';
+    else if(p.platform==='insta') mediaLabel='Story post';
+  }
+  var shares = p.shares || (p.likes && String(p.likes).includes('K') ? '2.4K' : '48');
+  d.innerHTML=`
+    <div class="post-topbar"></div>
+    <div class="post-header">
+      <div class="post-avatar" style="background:linear-gradient(135deg,#7c3aed,#ec4899)">${p.avatar}</div>
+      <div class="post-user"><strong>${p.user}</strong><span>${p.handle} · ${p.time}</span></div>
+      <span class="post-platform ${platClass}">${platLabel}</span>
+    </div>
+    <div class="post-content">${p.content}</div>
+    ${mediaLabel?`<div class="post-media">${mediaLabel}</div>`:''}
+    <div class="post-actions">
+      <div class="post-action-left">
+        <span class="post-stat">❤️ ${p.likes}</span>
+        <span class="post-stat">💬 ${p.comments}</span>
+        <span class="post-stat">🔁 ${shares}</span>
+      </div>
+      <span class="post-save">🔖</span>
+    </div>`;
+  return d;
+}
+
+function buildMessages(msgs){
+  var d=document.createElement('div');
+  d.className='messages';
+  var h=document.createElement('div');
+  h.className='msg-header';h.textContent='💬 Messages';
+  d.appendChild(h);
+  msgs.forEach(m=>{
+    var row=document.createElement('div');
+    row.className='msg '+(m.who==='me'?'me':'them');
+    if(m.who==='them'&&m.name){
+      var nm=document.createElement('div');nm.className='msg-name';nm.textContent=m.name;
+      row.appendChild(nm);
+    }
+    var bub=document.createElement('div');bub.className='bubble';bub.textContent=m.text;
+    row.appendChild(bub);
+    d.appendChild(row);
+  });
+  return d;
+}
+
+function buildViral(v){
+  var d=document.createElement('div');
+  d.className='viral-banner';
+  d.innerHTML=`<strong>${v.title}</strong><span>${v.sub}</span>`;
+  return d;
+}
+
+function buildConsequence(c){
+  var d=document.createElement('div');
+  d.className='consequence '+c.type;
+  var eff = c.effects||[];
+  var efftags = eff.map(e=>`<span class="effect-tag ${e.startsWith('+')?'effect-up':'effect-down'}">${e}</span>`).join('');
+  d.innerHTML=`<div class="csq-title">${c.type==='good'?'✅':c.type==='bad'?'❌':'⚠️'} ${c.title}</div>
+    <div class="csq-text">${c.text}</div>
+    ${efftags?`<div class="csq-effects">${efftags}</div>`:''}`;
+  return d;
+}
+
+function buildChoices(choices){
+  var area=document.getElementById('choicesArea');
+  area.innerHTML='';
+  var wrap=document.createElement('div');
+  wrap.className='choices';
+  choices.forEach((c,i)=>{
+    var btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.innerHTML=`<span class="choice-icon">${c.icon}</span>
+      <div><div class="choice-text">${c.text}</div>${c.hint?`<div class="choice-hint">${c.hint}</div>`:''}</div>`;
+    btn.onclick=()=>choose(c,choices);
+    wrap.appendChild(btn);
+  });
+  area.appendChild(wrap);
+}
+
+function choose(choice, allChoices){
+  // Disable all buttons
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  // Apply effects
+  var eff = choice.effect||{};
+  Object.entries(eff).forEach(([k,v])=>{
+    if(k==='follow'){
+      state.meters.follow = clamp(state.meters.follow+v,0,100);
+    } else if(state.meters[k]!==undefined){
+      state.meters[k] = clamp(state.meters[k]+v,0,100);
+    }
+  });
+  // Apply flags
+  if(choice.flag) state.flags[choice.flag]=true;
+  updateMeters();
+  // Show notification about effect
+  showEffectNotifs(eff);
+  // Check delayed consequences
+  checkDelayed();
+  // Next
+  setTimeout(()=>{
+    if(choice.next) loadScene(choice.next);
+    else showEnding();
+  },600);
+}
+
+function checkDelayed(){
+  // Certain flags trigger later consequences
+  if(state.flags.did_trend && state.act>=2 && !state.flags.trend_penalty_applied){
+    state.flags.trend_penalty_applied=true;
+    state.meters.sch = clamp(state.meters.sch-10,0,100);
+    showNotif('📋','Scholarship note','Your conduct flag was updated in the system.',5000);
+    updateMeters();
+  }
+  if(state.flags.reacted_marcus && state.act>=2 && !state.flags.marcus_penalty_applied){
+    state.flags.marcus_penalty_applied=true;
+    state.meters.trust = clamp(state.meters.trust-5,0,100);
+    updateMeters();
+  }
+  if(state.flags.encouraged_drama && state.act>=2 && !state.flags.drama_penalty_applied){
+    state.flags.drama_penalty_applied=true;
+    state.meters.rep = clamp(state.meters.rep-10,0,100);
+    showNotif('😬','Word spread','People heard you encouraged Devon\'s drama post.',5000);
+    updateMeters();
+  }
+}
+
+function showEffectNotifs(eff){
+  var map={rep:'Reputation',sch:'Scholarship Chance',trust:'Team Trust',follow:'Followers',mh:'Mental Health'};
+  Object.entries(eff).forEach(([k,v])=>{
+    if(v===0) return;
+    var label=map[k]||k;
+    var up=v>0;
+    showNotif(up?'📈':'📉',label,(up?'+':`${v}`)+(k==='follow'?'% reach':' points'),3500);
+  });
+}
+
+// ══════════════════════════════════════════
+// METERS
+// ══════════════════════════════════════════
+function updateMeters(){
+  var m=state.meters;
+  setMeter('Rep',m.rep);
+  setMeter('Sch',m.sch);
+  setMeter('Trust',m.trust);
+  setMeter('Follow',m.follow);
+  setMeter('MH',m.mh);
+  // Update followers display
+  var fbase = chars[state.char]?.followBase||3200;
+  var fDisp = Math.round(fbase * (m.follow/40));
+  document.getElementById('mFollowVal').textContent = fDisp>=1000?(fDisp/1000).toFixed(1)+'K':fDisp;
+}
+function setMeter(key,val){
+  var fill=document.getElementById('m'+key);
+  var valEl=document.getElementById('m'+key+'Val');
+  if(!fill||!valEl) return;
+  fill.style.width=val+'%';
+  if(key!=='Follow') valEl.textContent=val;
+  // Color warning
+  if(val<30) fill.style.filter='saturate(0.5)';
+  else fill.style.filter='none';
+}
+function clamp(v,mn,mx){return Math.max(mn,Math.min(mx,v));}
+
+// ══════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════
+function showNotif(icon,title,sub,dur=4000){
+  var c=document.getElementById('notifContainer');
+  var el=document.createElement('div');
+  el.className='notif';
+  el.innerHTML=`<span class="notif-icon">${icon}</span><div class="notif-text"><strong>${title}</strong><small>${sub}</small></div>`;
+  c.appendChild(el);
+  setTimeout(()=>el.remove(),dur);
+}
+
+// Screenshot flash
+function screenshotFlash(){
+  var d=document.createElement('div');
+  d.className='screenshot-flash';
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),300);
+}
+
+// ══════════════════════════════════════════
+// ENDING
+// ══════════════════════════════════════════
+function showEnding(){
+  show('game',false);
+  var m=state.meters;
+  var c=chars[state.char];
+  // Determine ending
+  var total=(m.rep+m.sch+m.trust+m.mh)/4;
+  var ending;
+  if(m.sch>=75&&m.rep>=70&&total>=70){
+    ending={emoji:'🏆',title:'Scholarship Secured',sub:'Your digital presence helped open the door.',msg:`The email was good news. ${c.name}'s four-year scholarship offer just arrived. Coaches remember players who carry themselves with class online AND on the field. Every mindful post, every pause before hitting send — it added up. Your story isn't over. It's just beginning.`,color:'var(--green)'};
+  } else if(m.trust>=75&&m.rep>=65){
+    ending={emoji:'🤝',title:'Team Captain Legacy',sub:'Your teammates voted. Your reputation spoke.',msg:`The scholarship offer is still pending — but your teammates just elected you captain. You\'ve shown that how you treat people online matches who you are in person. That consistency is rare. Coaches notice it. Scouts talk about it.`,color:'var(--cyan)'};
+  } else if(state.char==='influencer'&&m.follow>=70){
+    ending={emoji:'📱',title:'Digital Brand Built Right',sub:'You figured out how to be real AND smart.',msg:`A mid-sized brand reached out for a paid partnership. Your content is authentic, your audience trusts you, and your school track record is clean enough that your family is proud. You\'re building something real — and you\'re doing it right.`,color:'var(--pink)'};
+  } else if(total>=55&&total<70){
+    ending={emoji:'📖',title:'The Comeback Story',sub:'Some setbacks. Big lessons. Still standing.',msg:`You didn\'t get every opportunity you hoped for. But you learned something most people learn too late: your digital footprint is a first impression that you never fully erase — but you can reshape. You\'ve started that work. The real glow-up is still ahead.`,color:'var(--yellow)'};
+  } else {
+    ending={emoji:'💡',title:'The Wake-Up Call',sub:'It cost you something. Now you know why.',msg:`Some opportunities slipped away this year because of how you showed up online. The hard truth: it wasn\'t about being "authentic" — it was about not thinking about how posts land with people you haven\'t met yet. The good news? You still have time. Your future is bigger than one post.`,color:'var(--red)'};
+  }
+  show('ending');
+  document.getElementById('endEmoji').textContent=ending.emoji;
+  document.getElementById('endTitle').textContent=ending.title;
+  document.getElementById('endTitle').style.background=`linear-gradient(135deg,${ending.color},#ec4899)`;
+  document.getElementById('endTitle').style['-webkit-background-clip']='text';
+  document.getElementById('endTitle').style['-webkit-text-fill-color']='transparent';
+  document.getElementById('endSub').textContent=ending.sub;
+  document.getElementById('endMsg').textContent=ending.msg;
+  // Final stats
+  var fs=document.getElementById('finalStats');
+  fs.innerHTML='<h3>Your Digital Report Card</h3>';
+  var stats=[
+    {label:'Reputation',val:m.rep,color:'var(--cyan)'},
+    {label:'Scholarship Chance',val:m.sch,color:'var(--yellow)'},
+    {label:'Team Trust',val:m.trust,color:'var(--green)'},
+    {label:'Mental Health',val:m.mh,color:'#c084fc'}
+  ];
+  stats.forEach(s=>{
+    var row=document.createElement('div');
+    row.className='stat-row';
+    var grade=s.val>=80?'A':s.val>=65?'B':s.val>=50?'C':s.val>=35?'D':'F';
+    row.innerHTML=`<span style="min-width:130px;font-size:0.85rem">${s.label}</span>
+      <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:0%;background:${s.color}"></div></div>
+      <span style="min-width:30px;text-align:right;font-weight:700;color:${s.color}">${grade}</span>`;
+    fs.appendChild(row);
+    setTimeout(()=>row.querySelector('.stat-bar-fill').style.width=s.val+'%',200);
+  });
+}
+
+// ══════════════════════════════════════════
+// RESTART
+// ══════════════════════════════════════════
+function restartGame(){
+  show('ending',false);
+  state={char:null,meters:{rep:70,sch:65,trust:80,follow:40,mh:75},followersDisplay:3200,flags:{},act:1,sceneIdx:0,delayedConsequences:[]};
+  document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('csBtn').classList.remove('ready');
+  show('charSelect');
+}
+
+// ══════════════════════════════════════════
+// TEACHER MODE
+// ══════════════════════════════════════════
+var teacherOn=false;
+function toggleTeacher(){
+  teacherOn=!teacherOn;
+  if(teacherOn){
+    var overlay=document.createElement('div');
+    overlay.id='teacherOverlay';
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px';
+    overlay.innerHTML=`<div style="background:#1e1e2e;border-radius:20px;padding:30px;max-width:600px;border:1px solid var(--border)">
+      <h2 style="margin-bottom:16px;font-size:1.4rem">📊 Teacher Mode</h2>
+      <div style="color:#94a3b8;font-size:0.9rem;line-height:1.8">
+        <strong style="color:white">Discussion Questions:</strong><br>
+        1. Why do coaches and recruiters check social media?<br>
+        2. What is a "digital footprint" and how long does it last?<br>
+        3. When is the right time to post about emotions?<br>
+        4. What's the difference between being authentic and being careless online?<br>
+        5. How can social media be a POSITIVE tool for your future?<br><br>
+        <strong style="color:white">Key Concepts Covered:</strong><br>
+        ✅ Impersonation &amp; fake accounts<br>
+        ✅ Group chat privacy &amp; leaks<br>
+        ✅ Viral trends &amp; school consequences<br>
+        ✅ Emotional posting<br>
+        ✅ Recruiter/scholarship review<br>
+        ✅ Digital reputation management<br>
+        ✅ Positive personal branding
+      </div>
+      <button onclick="document.getElementById('teacherOverlay').remove();teacherOn=false;" style="margin-top:20px;background:var(--accent);border:none;color:white;padding:10px 24px;border-radius:50px;cursor:pointer;font-size:0.9rem">Close</button>
+    </div>`;
+    document.body.appendChild(overlay);
+  }
+}
+
+
+
+
+// ══════════════════════════════════════════
+// MUSIC + HOME
+// ══════════════════════════════════════════
+// Cozy lofi-style background music using Web Audio API.
+// No external file needed, so it works offline and on GitHub Pages.
+var musicOn = true;
+var audioCtx = null;
+var musicTimer = null;
+var masterGain = null;
+var activeNodes = [];
+
+var lofiChords = [
+  [261.63, 329.63, 392.00], // C major
+  [220.00, 261.63, 329.63], // A minor
+  [293.66, 349.23, 440.00], // D minor
+  [196.00, 246.94, 293.66]  // G soft
+];
+
+var lofiMelody = [
+  523.25, 493.88, 440.00, 392.00,
+  440.00, 493.88, 523.25, 0,
+  392.00, 440.00, 493.88, 440.00,
+  392.00, 329.63, 349.23, 0
+];
+
+function ensureAudio(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.0;
+    masterGain.connect(audioCtx.destination);
+  }
+  if(audioCtx.state === 'suspended'){
+    audioCtx.resume();
+  }
+}
+
+function registerNode(node){
+  activeNodes.push(node);
+  node.onended = function(){
+    activeNodes = activeNodes.filter(function(n){ return n !== node; });
+  };
+}
+
+function playSoftTone(freq, duration, when, volume, type){
+  if(!freq || !musicOn) return;
+
+  var osc = audioCtx.createOscillator();
+  var gain = audioCtx.createGain();
+
+  osc.type = type || 'sine';
+  osc.frequency.setValueAtTime(freq, when);
+
+  // Soft attack and release for a cozy, natural feel.
+  gain.gain.setValueAtTime(0.0001, when);
+  gain.gain.exponentialRampToValueAtTime(volume, when + 0.08);
+  gain.gain.exponentialRampToValueAtTime(0.0001, when + duration);
+
+  osc.connect(gain);
+  gain.connect(masterGain);
+
+  osc.start(when);
+  osc.stop(when + duration + 0.05);
+  registerNode(osc);
+}
+
+function playNoiseTick(when){
+  if(!musicOn) return;
+
+  var bufferSize = audioCtx.sampleRate * 0.04;
+  var buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  var data = buffer.getChannelData(0);
+
+  for(var i=0;i<bufferSize;i++){
+    data[i] = (Math.random() * 2 - 1) * 0.12;
+  }
+
+  var noise = audioCtx.createBufferSource();
+  var filter = audioCtx.createBiquadFilter();
+  var gain = audioCtx.createGain();
+
+  filter.type = 'lowpass';
+  filter.frequency.value = 900;
+
+  gain.gain.setValueAtTime(0.0001, when);
+  gain.gain.exponentialRampToValueAtTime(0.018, when + 0.005);
+  gain.gain.exponentialRampToValueAtTime(0.0001, when + 0.04);
+
+  noise.buffer = buffer;
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(masterGain);
+
+  noise.start(when);
+  noise.stop(when + 0.05);
+  registerNode(noise);
+}
+
+function scheduleLofiLoop(){
+  if(!musicOn || !audioCtx) return;
+
+  var now = audioCtx.currentTime + 0.08;
+  var beat = 0.62; // relaxed lofi tempo
+  var chordLength = beat * 4;
+
+  // Gentle master fade in every loop.
+  masterGain.gain.cancelScheduledValues(now);
+  masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+  masterGain.gain.linearRampToValueAtTime(0.08, now + 0.4);
+
+  for(var c=0; c<lofiChords.length; c++){
+    var chordTime = now + c * chordLength;
+    lofiChords[c].forEach(function(freq){
+      playSoftTone(freq, chordLength * 0.92, chordTime, 0.035, 'triangle');
+    });
+
+    // Warm bass note.
+    playSoftTone(lofiChords[c][0] / 2, chordLength * 0.9, chordTime, 0.045, 'sine');
+
+    // Tiny soft beat ticks.
+    playNoiseTick(chordTime + beat * 1.05);
+    playNoiseTick(chordTime + beat * 3.05);
+  }
+
+  for(var m=0; m<lofiMelody.length; m++){
+    var freq = lofiMelody[m];
+    var noteTime = now + m * beat;
+    playSoftTone(freq, beat * 0.72, noteTime, 0.018, 'sine');
+  }
+
+  musicTimer = setTimeout(scheduleLofiLoop, beat * 16 * 1000);
+}
+
+function startMusic(){
+  if(!musicOn) return;
+  ensureAudio();
+  if(musicTimer) clearTimeout(musicTimer);
+  scheduleLofiLoop();
+  updateMusicButton();
+}
+
+function stopMusic(){
+  musicOn = false;
+
+  if(musicTimer) clearTimeout(musicTimer);
+  musicTimer = null;
+
+  if(audioCtx && masterGain){
+    var now = audioCtx.currentTime;
+    masterGain.gain.cancelScheduledValues(now);
+    masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+    masterGain.gain.linearRampToValueAtTime(0.0001, now + 0.08);
+  }
+
+  // Stop every sound that was already scheduled.
+  activeNodes.forEach(function(node){
+    try { node.stop(0); } catch(e) {}
+  });
+  activeNodes = [];
+
+  updateMusicButton();
+}
+
+function toggleMusic(){
+  if(musicOn){
+    stopMusic();
+  }else{
+    musicOn = true;
+    startMusic();
+  }
+}
+
+function updateMusicButton(){
+  var btn = document.getElementById('musicBtn');
+  if(!btn) return;
+
+  if(musicOn){
+    btn.textContent = 'Music On';
+    btn.style.borderColor = '#10b981';
+  }else{
+    btn.textContent = 'Music Off';
+    btn.style.borderColor = '#64748b';
+  }
+}
+
+function goHome(){
+  // Return to main POST OR PAUSE splash page without reloading the file.
+  show('game', false);
+  show('charSelect', false);
+  show('ending', false);
+  show('splash', true);
+
+  state.char = null;
+  state.meters = {rep:70,sch:65,trust:80,follow:40,mh:75};
+  state.followersDisplay = 3200;
+  state.flags = {};
+  state.act = 1;
+  state.sceneIdx = 0;
+  state.delayedConsequences = [];
+
+  document.querySelectorAll('.char-card').forEach(function(card){
+    card.classList.remove('selected');
+  });
+
+  var csBtn = document.getElementById('csBtn');
+  if(csBtn) csBtn.classList.remove('ready');
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Browser policy requires one user interaction before audio can start.
+// The music is default ON, so the first click/tap starts it automatically.
+document.addEventListener('click', function startMusicAfterFirstTap(){
+  if(musicOn){
+    startMusic();
+  }
+}, {once:true});
+
+window.addEventListener('load', updateMusicButton);
+
+</script>
+
+<!-- Floating Controls -->
+<div id="floatingControls" style="position:fixed;top:16px;left:16px;z-index:999;display:flex;gap:10px;">
+  <button id="homeBtn" onclick="goHome()" title="Home" style="background:rgba(30,30,46,0.92);border:1px solid #7c3aed;color:white;min-width:54px;height:46px;border-radius:999px;cursor:pointer;font-size:0.9rem;font-weight:800;backdrop-filter:blur(10px);transition:all .3s;">HOME</button>
+
+  <button id="musicBtn" onclick="toggleMusic()" title="Music On / Off" style="background:rgba(30,30,46,0.92);border:1px solid #10b981;color:white;min-width:78px;height:46px;border-radius:999px;cursor:pointer;font-size:0.9rem;font-weight:800;backdrop-filter:blur(10px);transition:all .3s;">Music On</button>
+</div></body>
+</html>

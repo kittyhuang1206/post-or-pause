@@ -411,6 +411,15 @@ body{
 .pf-field textarea{min-height:58px;line-height:1.5}
 .pf-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
 .pf-actions{display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.pf-btn{border:none;font-size:0.95rem;font-weight:800;padding:14px 26px;border-radius:999px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:9px;transition:transform .25s,box-shadow .25s,background .2s}
+.pf-btn .ic-svg{width:1.05em;height:1.05em}
+.pf-primary{background:linear-gradient(135deg,var(--accent),var(--pink));color:#fff;box-shadow:0 8px 28px rgba(168,85,247,0.45)}
+.pf-primary:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 12px 36px rgba(168,85,247,0.55)}
+.pf-white{background:#fff;color:#1f2440;box-shadow:0 6px 18px rgba(0,0,0,0.28)}
+.pf-white .ic-svg{color:var(--accent)}
+.pf-white:hover{transform:translateY(-2px);background:#f1f2f7}
+.pf-btn:disabled{opacity:.6;transform:none}
 .pf-tip{text-align:center;color:var(--dim);font-size:0.76rem;margin-top:12px}
 .pf-photo{display:flex;flex-direction:column;align-items:center;gap:10px;padding:4px 0 14px;border-bottom:1px solid var(--border);margin-bottom:4px}
 .pf-avatar{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--pink)) center/cover no-repeat;
@@ -469,13 +478,12 @@ body{
     <div class="splash-badge"><span class="dot"></span> Interactive Story</div>
     <div class="splash-logo">POST<br>OR PAUSE</div>
     <div class="splash-sub">Social Media Smarts</div>
-    <p class="splash-tagline">Every post can shape your future. <span class="hl">Will you post — or pause?</span></p>
+    <p class="splash-tagline">Every post can shape your future.<br><span class="hl">Will you post — or pause?</span></p>
     <button class="start-btn" onclick="goToCharSelect()">TAP TO START <span data-ic="arrowRight"></span></button>
     <div class="splash-feats">
       <span class="feat-pill"><span data-ic="masks"></span> 4 characters</span>
       <span class="feat-pill"><span data-ic="branch"></span> Branching paths</span>
       <span class="feat-pill"><span data-ic="medal"></span> Achievements</span>
-      <span class="feat-pill"><span data-ic="barChart"></span> Teacher mode</span>
     </div>
     <br>
     <button class="splash-resume" id="resumeBtn" onclick="resumeGame()"><span data-ic="returnArrow"></span> Continue your saved story</button>
@@ -1900,8 +1908,8 @@ function renderProfileForm(){
     +'<p>This is the profile a coach, college, or employer would love to find. Fill it in, then save a card to keep.</p></div>'
     +'<div class="pf-form">'+photoBlock+fields+'</div>'
     +'<div class="pf-actions">'
-      +'<button class="restart-btn" onclick="showProfileCard()">'+svgIcon('star')+' Create my card</button>'
-      +'<button class="ghost-btn" onclick="goHome()">'+svgIcon('home')+' Home</button></div>'
+      +'<button class="pf-btn pf-primary" onclick="showProfileCard()">'+svgIcon('star')+' Create my card</button>'
+      +'<button class="pf-btn pf-white" onclick="goHome()">'+svgIcon('home')+' Home</button></div>'
     +'<div class="pf-tip">Your answers stay on this device — nothing is sent anywhere.</div>';
 }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -1990,11 +1998,10 @@ function showProfileCard(){
     +'<p>Save it as an image or print it. This is who you want the internet to meet.</p></div>'
     +'<div class="pf-card-stage"><div id="profileCard">'+makeCardHTML(d)+'</div></div>'
     +'<div class="pf-actions">'
-      +'<button class="restart-btn" onclick="downloadProfileCard()">'+svgIcon('camera')+' Save as image</button>'
-      +'<button class="ghost-btn" onclick="printProfileCard()">'+svgIcon('clipboard')+' Print / PDF</button>'
-      +(submitEnabled()?'<button class="ghost-btn" id="pfSubmitBtn" onclick="submitProfile()">'+svgIcon('megaphone')+' Submit to class</button>':'')
-      +'<button class="ghost-btn" onclick="renderProfileForm()">'+svgIcon('edit')+' Edit</button>'
-      +'<button class="ghost-btn" onclick="goHome()">'+svgIcon('home')+' Home</button></div>'
+      +(submitEnabled()?'<button class="pf-btn pf-primary" id="pfSubmitBtn" onclick="submitProfile()">'+svgIcon('megaphone')+' Submit to class</button>':'')
+      +'<button class="pf-btn '+(submitEnabled()?'pf-white':'pf-primary')+'" onclick="saveCardImage()">'+svgIcon('camera')+' Save image</button>'
+      +'<button class="pf-btn pf-white" onclick="renderProfileForm()">'+svgIcon('edit')+' Edit</button>'
+      +'<button class="pf-btn pf-white" onclick="goHome()">'+svgIcon('home')+' Home</button></div>'
     +'<div class="pf-tip">'+(submitEnabled()
         ?'“Submit to class” shares your profile with your teacher. Everything else stays on this device.'
         :'Nothing is uploaded — your card is created right here on your device.')+'</div>';
@@ -2020,34 +2027,100 @@ function submitDone(btn){
   if(btn){ btn.dataset.sent='1'; btn.innerHTML=svgIcon('checkCircle')+' Submitted'; btn.style.opacity='1'; }
 }
 function printProfileCard(){ playClick(); window.print(); }
-function downloadProfileCard(){
+
+// Reliable image export: draw the card on a canvas (works on Chromebook/iPad/Windows, offline).
+function saveCardImage(){
   playClick();
-  var card=document.getElementById('profileCard');
-  var w=600, h=Math.ceil(card.getBoundingClientRect().height) || 760;
-  var html=card.innerHTML;
-  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'">'
-    +'<foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="width:'+w+'px">'+html+'</div></foreignObject></svg>';
-  var blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
-  var url=URL.createObjectURL(blob);
-  var img=new Image();
-  img.onload=function(){
-    try{
-      var scale=2, canvas=document.createElement('canvas');
-      canvas.width=w*scale; canvas.height=h*scale;
-      var ctx=canvas.getContext('2d'); ctx.scale(scale,scale);
-      ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h);
-      ctx.drawImage(img,0,0);
-      URL.revokeObjectURL(url);
-      canvas.toBlob(function(b){
-        var a=document.createElement('a');
-        a.download='my-future-profile.png';
-        a.href=URL.createObjectURL(b); a.click();
-        setTimeout(function(){ URL.revokeObjectURL(a.href); },1000);
-      },'image/png');
-    }catch(e){ showNotif('clipboard','Use Print instead','Image export isn’t supported here — try Print / PDF.',4500); }
-  };
-  img.onerror=function(){ URL.revokeObjectURL(url); showNotif('clipboard','Use Print instead','Image export isn’t supported here — try Print / PDF.',4500); };
-  img.src=url;
+  var d=pfDraft();
+  if(d.photo){
+    var im=new Image();
+    im.onload=function(){ renderCardCanvas(d, im); };
+    im.onerror=function(){ renderCardCanvas(d, null); };
+    im.src=d.photo;
+  } else { renderCardCanvas(d, null); }
+}
+function renderCardCanvas(d, photoImg){
+  try{
+    var scale=2, W=700, P=40, MAXH=6000;
+    var cv=document.createElement('canvas'); cv.width=W*scale; cv.height=MAXH*scale;
+    var ctx=cv.getContext('2d'); ctx.scale(scale,scale); ctx.textBaseline='alphabetic';
+    var FF="Arial, Helvetica, sans-serif";
+    function font(px,b){ ctx.font=(b?'bold ':'')+px+'px '+FF; }
+    function rr(x,y,w,h,r){ ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath(); }
+    function wrap(t,maxW){ var ws=String(t).split(/\s+/),ls=[],c=''; for(var i=0;i<ws.length;i++){var tt=c?c+' '+ws[i]:ws[i]; if(ctx.measureText(tt).width>maxW&&c){ls.push(c);c=ws[i];}else c=tt;} if(c)ls.push(c); return ls; }
+    var list=function(v){ return String(v||'').split(/[,\n]|\s+and\s+/i).map(function(s){return s.trim();}).filter(Boolean); };
+
+    var name=(d.name||'').trim()||'My Future';
+    var initial=((name.match(/[A-Za-z0-9]/)||['★'])[0]).toUpperCase();
+    var handle='@'+(name.toLowerCase().replace(/[^a-z0-9]+/g,'')||'futureready');
+    var bio=(d.bio||'').trim(), goals=(d.goals||'').trim(), dream=(d.dream||'').trim();
+    var talents=list(d.talents), causes=list(d.causes);
+    var posts=String(d.posts||'').split(/\n/).map(function(s){return s.replace(/^[\s•\-]+/,'').trim();}).filter(Boolean);
+
+    // white background (body)
+    ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,MAXH);
+
+    // ---- header (measure then draw gradient) ----
+    var avTop=58, avD=84, afterAv=avTop+avD;
+    font(15,false); var bioLines = bio?wrap(bio, W-2*P-28):[];
+    var bioTop=afterAv+16, bioH = bio ? (14+bioLines.length*21+14) : 0;
+    var statTop = (bio?bioTop+bioH:afterAv)+16, statH=48;
+    var headerH = statTop+statH+18;
+    var g=ctx.createLinearGradient(0,0,W,headerH); g.addColorStop(0,'#7c3aed'); g.addColorStop(0.5,'#a855f7'); g.addColorStop(1,'#ec4899');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,headerH);
+
+    // eyebrow
+    ctx.fillStyle='rgba(255,255,255,0.92)'; font(12,true); ctx.fillText('MY FUTURE PROFILE', P, 34);
+    // avatar
+    var cx=P+avD/2, cy=avTop+avD/2, r=avD/2;
+    ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.closePath(); ctx.clip();
+    if(photoImg){ var s=Math.max(avD/photoImg.width, avD/photoImg.height); var dw=photoImg.width*s, dh=photoImg.height*s; ctx.drawImage(photoImg, cx-dw/2, cy-dh/2, dw, dh); }
+    else { ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(avTop?0:0,0,W,headerH); ctx.fillStyle='#fff'; font(34,true); ctx.textAlign='center'; ctx.fillText(initial,cx,cy+12); ctx.textAlign='left'; }
+    ctx.restore();
+    ctx.lineWidth=3; ctx.strokeStyle='rgba(255,255,255,0.7)'; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+    // name + verified
+    var nx=P+avD+18;
+    ctx.fillStyle='#fff'; font(25,true); ctx.fillText(name, nx, avTop+30);
+    var nw=ctx.measureText(name).width;
+    var bx=nx+nw+16, by=avTop+24;
+    ctx.fillStyle='#38bdf8'; ctx.beginPath(); ctx.arc(bx,by-4,11,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(bx-5,by-4); ctx.lineTo(bx-1.5,by-0.5); ctx.lineTo(bx+5,by-8); ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.92)'; font(14,false); ctx.fillText(handle+'  ·  building my future', nx, avTop+58);
+    // bio pill
+    if(bio){ ctx.fillStyle='rgba(255,255,255,0.16)'; rr(P,bioTop,W-2*P,bioH,13); ctx.fill(); ctx.fillStyle='#fff'; font(15,false); var byy=bioTop+24; bioLines.forEach(function(ln){ ctx.fillText('“'+ln+(ln===bioLines[bioLines.length-1]?'”':''), P+14, byy); byy+=21; }); }
+    // stat pills
+    var dreamWord = dream ? (dream.split(/[ ,]/)[0]+'-BOUND') : 'DREAMING BIG';
+    var pills=['ON A MISSION', dreamWord.toUpperCase(), 'AUTHENTIC'];
+    var pw=(W-2*P-2*8)/3;
+    pills.forEach(function(t,i){ var px=P+i*(pw+8); ctx.fillStyle='rgba(255,255,255,0.16)'; rr(px,statTop,pw,statH,12); ctx.fill(); ctx.fillStyle='#fff'; font(12,true); ctx.textAlign='center'; var tt=t; while(ctx.measureText(tt).width>pw-14 && tt.length>4){ tt=tt.slice(0,-2); } ctx.fillText(tt, px+pw/2, statTop+statH/2+4); ctx.textAlign='left'; });
+
+    // ---- body ----
+    var y=headerH+24;
+    function label(t){ ctx.fillStyle='#7c3aed'; font(11,true); ctx.fillText(t.toUpperCase(), P, y+10); y+=20; }
+    function highlight(lab,val){ font(15,false); var lines=wrap(val, W-2*P-28); var h=42+lines.length*21; ctx.fillStyle='#f3f1fb'; rr(P,y,W-2*P,h,14); ctx.fill(); ctx.fillStyle='#7c3aed'; font(11,true); ctx.fillText(lab.toUpperCase(),P+16,y+22); ctx.fillStyle='#1f2440'; font(15,false); var ty=y+44; lines.forEach(function(ln){ctx.fillText(ln,P+16,ty);ty+=21;}); y+=h+13; }
+    function chips(lab,items,hash){ label(lab); font(13,true); var x=P; items.forEach(function(it){ var t=hash?('#'+it.replace(/[^A-Za-z0-9]+/g,'')):it; var tw=ctx.measureText(t).width, w=tw+24; if(x+w>W-P){x=P;y+=38;} ctx.fillStyle='#efeafe'; rr(x,y,w,30,15); ctx.fill(); ctx.fillStyle='#6d28d9'; ctx.fillText(t,x+12,y+20); x+=w+8; }); y+=30+13; }
+    function feed(lab,items){ label(lab); font(14,false); items.forEach(function(p){ var lines=wrap(p, W-2*P-46); var h=Math.max(42,18+lines.length*20); ctx.fillStyle='#fff'; ctx.strokeStyle='#ece9f6'; ctx.lineWidth=1; rr(P,y,W-2*P,h,14); ctx.fill(); ctx.stroke(); ctx.fillStyle='#a855f7'; ctx.beginPath(); ctx.arc(P+19,y+h/2,13,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#1f2440'; font(14,false); var ty=y+(h-lines.length*20)/2+15; lines.forEach(function(ln){ctx.fillText(ln,P+44,ty);ty+=20;}); y+=h+9; }); y+=4; }
+
+    if(dream) highlight('Dream College / Job', dream);
+    if(goals) highlight('The goal I’m chasing', goals);
+    if(talents.length) chips('My talents', talents, false);
+    if(causes.length) chips('Causes I care about', causes, true);
+    if(posts.length) feed('Posts that show my best self', posts);
+
+    // footer
+    y+=2; ctx.fillStyle='#f7f7fb'; ctx.fillRect(0,y,W,46); ctx.fillStyle='#8b8fa3'; font(11,false);
+    ctx.fillText('Post or Pause', P, y+28);
+    ctx.textAlign='right'; ctx.fillText('SR1 C.O.O.L.™ · Social Media Smarts', W-P, y+28); ctx.textAlign='left';
+    var finalY=y+46;
+
+    // crop to used height and export
+    var out=document.createElement('canvas'); out.width=W*scale; out.height=finalY*scale;
+    out.getContext('2d').drawImage(cv, 0,0, W*scale, finalY*scale, 0,0, W*scale, finalY*scale);
+    var fname='future-profile-'+(name.toLowerCase().replace(/[^a-z0-9]+/g,'-')||'card')+'.png';
+    if(out.toBlob){ out.toBlob(function(b){ var a=document.createElement('a'); a.download=fname; a.href=URL.createObjectURL(b); document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(a.href);},1500); },'image/png'); }
+    else { var a=document.createElement('a'); a.download=fname; a.href=out.toDataURL('image/png'); a.click(); }
+    playSuccess(); showNotif('checkCircle','Image saved','Check your Downloads for your profile card.',3800);
+  }catch(e){ showNotif('alert','Couldn’t save image','Try the Print / PDF option instead.',4500); }
 }
 
 // ══════════════════════════════════════════
@@ -2078,7 +2151,13 @@ function toggleTeacher(){
     +'<h4>'+svgIcon('gamepad',18)+' How to use in class</h4><ul>'
     +'<li>Play one character together, pausing at each choice to vote and debate.</li>'
     +'<li>Have students play all four characters and compare endings &amp; badges.</li>'
-    +'<li>End with the report card — discuss which meter each choice affected and why.</li></ul>'
+    +'<li>End with the report card — discuss which meter each choice affected and why.</li>'
+    +'<li>Finish with the Build Your Future Profile activity (below).</li></ul>'
+    +'<h4>'+svgIcon('star',18)+' Build Your Future Profile</h4>'
+    +'<div class="concept">A capstone activity (on the Home screen and after any ending). Students design the positive profile a coach, college, or employer would love to find — name/initials, bio, goals, dream school or job, talents, causes, and positive-post ideas — plus an optional photo, and turn it into a shareable card.</div>'
+    +'<div class="concept">They can Save the card as an image or Print it. Everything stays on the device. Photos are never sent.</div>'
+    +'<div class="concept">Optional: turn on "Submit to class" to collect the text answers in a Google Sheet you own (see Profile-Data-Setup-Google.md). Keep entries to first name or initials.</div>'
+    +'<div class="concept">Discuss: how is this different from how people sometimes show up online? What would make a recruiter want to reach out?</div>'
     +'<button class="modal-close" onclick="closeModal(\'teacherOverlay\')">Close</button></div>';
   document.body.appendChild(o);
 }

@@ -59,7 +59,7 @@ body{
 @keyframes screenIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
 /* ===== SPLASH ===== */
-#splash{align-items:center;justify-content:center;text-align:center;padding:24px}
+#splash{align-items:center;justify-content:center;text-align:center;padding:24px;position:relative}
 .splash-badge{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--glass-border);
   backdrop-filter:blur(14px);padding:6px 14px;border-radius:999px;font-size:0.72rem;color:var(--muted);
   letter-spacing:1.5px;text-transform:uppercase;margin-bottom:26px;font-weight:600}
@@ -388,6 +388,56 @@ body{
 .modal h4 .ic-svg{width:18px;height:18px;color:var(--accent2)}
 .modal .concept .ic-svg{width:18px;height:18px;color:var(--accent2);margin-top:1px}
 .score-ring .num .ic-svg{width:34px;height:34px}
+/* ===== BUILD YOUR FUTURE PROFILE ===== */
+.splash-secondary{margin-top:14px;background:var(--card);border:1px solid var(--glass-border);backdrop-filter:blur(12px);
+  color:#e2e8f0;font-size:0.9rem;font-weight:700;padding:11px 22px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.25s}
+.splash-secondary:hover{border-color:var(--accent2);color:#fff;transform:translateY(-2px)}
+.splash-secondary .ic-svg{width:1em;height:1em;color:var(--yellow)}
+#profile{padding:24px 16px 60px;align-items:center}
+.profile-inner{max-width:680px;width:100%;margin:0 auto}
+.pf-head{text-align:center;margin:44px 0 18px}
+.pf-eyebrow{font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--accent2);font-weight:700;margin-bottom:8px}
+.pf-head h2{font-size:clamp(1.5rem,5vw,2.2rem);font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+.pf-head p{color:var(--muted);font-size:0.92rem;max-width:480px;margin:0 auto}
+.pf-form{display:flex;flex-direction:column;gap:13px;background:var(--card);border:1px solid var(--glass-border);
+  border-radius:var(--r);padding:20px;backdrop-filter:blur(14px);box-shadow:var(--shadow)}
+.pf-field{display:flex;flex-direction:column;gap:5px}
+.pf-field label{font-size:0.8rem;font-weight:700;color:#cbd5e1;display:flex;align-items:center;gap:7px}
+.pf-field label .ic-svg{width:15px;height:15px;color:var(--accent2)}
+.pf-field .hint{font-weight:400;color:var(--dim);font-size:0.74rem}
+.pf-field input,.pf-field textarea{background:rgba(10,10,20,0.5);border:1.5px solid var(--border);border-radius:11px;
+  color:var(--text);font-family:inherit;font-size:0.9rem;padding:11px 13px;width:100%;transition:border-color .2s;resize:vertical}
+.pf-field input:focus,.pf-field textarea:focus{outline:none;border-color:var(--accent2)}
+.pf-field textarea{min-height:58px;line-height:1.5}
+.pf-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.pf-actions{display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.pf-tip{text-align:center;color:var(--dim);font-size:0.76rem;margin-top:12px}
+.pf-photo{display:flex;flex-direction:column;align-items:center;gap:10px;padding:4px 0 14px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.pf-avatar{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--pink)) center/cover no-repeat;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:2.2rem;font-weight:800;
+  box-shadow:0 8px 24px rgba(124,58,237,0.4);border:3px solid rgba(255,255,255,0.18)}
+.pf-photo-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:center}
+.pf-small{padding:8px 15px!important;font-size:0.82rem!important}
+.pf-small .ic-svg{width:15px;height:15px}
+.pf-photo-hint{color:var(--dim);font-size:0.74rem}
+.screen-credit{position:absolute;left:0;right:0;bottom:12px;text-align:center;color:var(--dim);font-size:0.7rem;opacity:.7;padding:0 70px;pointer-events:none}
+
+/* generated card preview wrapper */
+.pf-card-stage{display:flex;justify-content:center;margin-top:6px}
+#profileCard{width:600px;max-width:100%;border-radius:20px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,0.5)}
+
+@media(max-width:560px){ .pf-row{grid-template-columns:1fr} }
+
+/* Print: show only the profile card */
+@media print{
+  body{background:#fff!important}
+  .bg-orbs,.bg-grid,#floatingControls,.teacher-btn,.notif-container,.achv-toast,.pf-form,.pf-head,.pf-actions,.pf-tip{display:none!important}
+  .screen{display:none!important}
+  #profile.active{display:block!important;min-height:auto;padding:0}
+  .pf-card-stage{margin:0}
+  #profileCard{box-shadow:none;width:100%;max-width:100%}
+}
+
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(148,163,184,0.3);border-radius:99px}
@@ -429,7 +479,9 @@ body{
     </div>
     <br>
     <button class="splash-resume" id="resumeBtn" onclick="resumeGame()"><span data-ic="returnArrow"></span> Continue your saved story</button>
+    <div><button class="splash-secondary" onclick="openProfile()"><span data-ic="star"></span> Build Your Future Profile</button></div>
   </div>
+  <div class="screen-credit">Created by SR1 STEM Learning Designer Tzu Hsin (Kitty) Huang · 2026</div>
 </div>
 
 <!-- ══ CHARACTER SELECT ══ -->
@@ -477,6 +529,9 @@ body{
 <!-- ══ ENDING ══ -->
 <div class="screen" id="ending"><div class="ending-inner" id="endingInner"></div></div>
 
+<!-- ══ BUILD YOUR FUTURE PROFILE ══ -->
+<div class="screen" id="profile"><div class="profile-inner" id="profileInner"></div></div>
+
 <button class="teacher-btn" onclick="toggleTeacher()"><span data-ic="barChart"></span> Teacher Mode</button>
 
 <div id="floatingControls">
@@ -489,6 +544,15 @@ body{
 // STATE  (CHARACTERS CONFIG)
 // ══════════════════════════════════════════
 var SAVE_KEY = 'postOrPause_v2';
+
+// ══════════════════════════════════════════
+// OPTIONAL: collect Future Profiles into a Google Sheet
+// Leave blank to keep everything on-device (no data leaves the browser).
+// To enable: follow Profile-Data-Setup-Google.md, then paste your
+// Apps Script Web App URL between the quotes below.
+//   e.g. var SUBMIT_URL = "https://script.google.com/macros/s/AKfyc.../exec";
+var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbx4twhjx1IKEevqG-5tlwA71RMeeamRYAegsSOtTLqtfMuQNhNRMNBPlY2facDPY3GU/exec";
+// ══════════════════════════════════════════
 var state = {
   char:null,
   meters:{rep:70,sch:65,trust:80,follow:40,mh:75},
@@ -1716,6 +1780,7 @@ function showEnding(){
     +(recapHtml?'<div class="panel-card"><h3>'+svgIcon('edit',15)+' The Choices That Mattered</h3>'+recapHtml+'</div>':'')
     +'<div class="panel-card"><h3>'+svgIcon('clapper',15)+' Endings Discovered · '+unlockedCount+'/'+ALL_ENDINGS.length+'</h3><div class="gallery">'+galHtml+'</div></div>'
     +'<div class="end-actions"><button class="restart-btn" onclick="restartGame()">'+svgIcon('refresh')+' Play Again</button>'
+      +'<button class="ghost-btn" onclick="openProfile()">'+svgIcon('star')+' Build Your Future Profile</button>'
       +'<button class="ghost-btn" onclick="goHome()">'+svgIcon('home')+' Home</button></div>';
 
   show('ending');
@@ -1751,9 +1816,238 @@ function restartGame(){
 }
 function goHome(){
   playClick();
-  show('game',false); show('charSelect',false); show('ending',false); show('splash',true);
+  show('game',false); show('charSelect',false); show('ending',false); show('profile',false); show('splash',true);
   refreshResume();
   scrollTop();
+}
+
+// ══════════════════════════════════════════
+// BUILD YOUR FUTURE PROFILE  (capstone activity — stays on device)
+// ══════════════════════════════════════════
+var PF_KEY = 'postOrPause_profile';
+var CREDIT = 'Created by SR1 STEM Learning Designer Tzu Hsin (Kitty) Huang · 2026';
+var PF_FIELDS = [
+  {k:'name',  label:'First name or initials', ic:'idcard', ph:'e.g. Jordan T. or J.T.', type:'input', max:40},
+  {k:'bio',   label:'Bio', ic:'star', hint:'One line that sums you up', ph:'Future engineer. Team captain. Always learning.', type:'area'},
+  {k:'goals', label:'My goals', ic:'target', ph:'What I’m working toward this year and beyond', type:'area'},
+  {k:'dream', label:'Dream college / job', ic:'grad', ph:'Where I see myself headed', type:'input'},
+  {k:'talents', label:'My talents', ic:'medal', ph:'What I’m good at', type:'input'},
+  {k:'causes', label:'Causes I care about', ic:'heart', ph:'What matters to me', type:'input'},
+  {k:'posts', label:'Positive posts I could share', ic:'megaphone', hint:'Ideas that show your best self', ph:'• Volunteering this weekend\n• A win from practice\n• Helping a classmate', type:'area'}
+];
+function pfDraft(){ try{ return JSON.parse(localStorage.getItem(PF_KEY))||{}; }catch(e){ return {}; } }
+function pfSave(){
+  var d=pfDraft(); // keep existing values (e.g. photo)
+  PF_FIELDS.forEach(function(f){ var el=document.getElementById('pf-'+f.k); if(el) d[f.k]=el.value; });
+  try{ localStorage.setItem(PF_KEY, JSON.stringify(d)); }catch(e){}
+}
+// ── profile photo (take or upload; stays on device, auto-shrunk) ──
+function triggerPhoto(){ var i=document.getElementById('pfPhoto'); if(i) i.click(); }
+function onPhotoPick(e){
+  var f=e.target.files&&e.target.files[0]; if(!f) return;
+  var rd=new FileReader();
+  rd.onload=function(){ resizePhoto(rd.result,function(url){
+    var d=pfDraft(); d.photo=url;
+    try{ localStorage.setItem(PF_KEY,JSON.stringify(d)); }
+    catch(err){ showNotif('alert','Photo too large','Try a smaller image.',4500); return; }
+    playClick(); renderProfileForm();
+  }); };
+  rd.readAsDataURL(f);
+}
+function resizePhoto(src,cb){
+  var img=new Image();
+  img.onload=function(){
+    var max=440, s=Math.min(1,max/Math.max(img.width,img.height));
+    var w=Math.round(img.width*s), h=Math.round(img.height*s);
+    var c=document.createElement('canvas'); c.width=w; c.height=h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    try{ cb(c.toDataURL('image/jpeg',0.85)); }catch(e){ cb(src); }
+  };
+  img.onerror=function(){ cb(src); };
+  img.src=src;
+}
+function removePhoto(){ var d=pfDraft(); delete d.photo; try{localStorage.setItem(PF_KEY,JSON.stringify(d));}catch(e){} playClick(); renderProfileForm(); }
+function openProfile(){
+  playClick();
+  show('splash',false); show('game',false); show('charSelect',false); show('ending',false); show('profile',true);
+  renderProfileForm();
+  scrollTop();
+}
+function renderProfileForm(){
+  var d=pfDraft();
+  var fields=PF_FIELDS.map(function(f){
+    var val=(d[f.k]||'').replace(/"/g,'&quot;');
+    var ctrl = f.type==='area'
+      ? '<textarea id="pf-'+f.k+'" rows="2" placeholder="'+f.ph+'" oninput="pfSave()">'+(d[f.k]||'')+'</textarea>'
+      : '<input id="pf-'+f.k+'" type="text" maxlength="'+(f.max||80)+'" placeholder="'+f.ph+'" value="'+val+'" oninput="pfSave()">';
+    return '<div class="pf-field"><label>'+svgIcon(f.ic,15)+' '+f.label
+      +(f.hint?' <span class="hint">— '+f.hint+'</span>':'')+'</label>'+ctrl+'</div>';
+  }).join('');
+  var nm=(d.name||'').trim();
+  var photoInit=esc(((nm.match(/[A-Za-z0-9]/)||['+'])[0]).toUpperCase());
+  var avatar = d.photo
+    ? '<div class="pf-avatar" style="background-image:url('+d.photo+')"></div>'
+    : '<div class="pf-avatar"><span>'+photoInit+'</span></div>';
+  var photoBlock='<div class="pf-photo">'+avatar
+    +'<div class="pf-photo-actions">'
+      +'<button type="button" class="ghost-btn pf-small" onclick="triggerPhoto()">'+svgIcon('camera')+' '+(d.photo?'Change photo':'Add photo')+'</button>'
+      +(d.photo?'<button type="button" class="ghost-btn pf-small" onclick="removePhoto()">'+svgIcon('xCircle')+' Remove</button>':'')
+    +'</div>'
+    +'<input type="file" id="pfPhoto" accept="image/*" style="display:none" onchange="onPhotoPick(event)">'
+    +'<div class="pf-photo-hint">Take a photo or choose one — it stays on your device.</div></div>';
+  document.getElementById('profileInner').innerHTML=
+    '<div class="pf-head"><div class="pf-eyebrow">Activity</div><h2>Build Your Future Profile</h2>'
+    +'<p>This is the profile a coach, college, or employer would love to find. Fill it in, then save a card to keep.</p></div>'
+    +'<div class="pf-form">'+photoBlock+fields+'</div>'
+    +'<div class="pf-actions">'
+      +'<button class="restart-btn" onclick="showProfileCard()">'+svgIcon('star')+' Create my card</button>'
+      +'<button class="ghost-btn" onclick="goHome()">'+svgIcon('home')+' Home</button></div>'
+    +'<div class="pf-tip">Your answers stay on this device — nothing is sent anywhere.</div>';
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function nl2br(s){ return esc(s).replace(/\n/g,'<br>'); }
+function makeCardHTML(d){
+  var name=(d.name||'').trim()||'My Future';
+  var initial=esc(((name.match(/[A-Za-z0-9]/)||['★'])[0]).toUpperCase());
+  var handle='@'+(name.toLowerCase().replace(/[^a-z0-9]+/g,'')||'futureready');
+  var bio=(d.bio||'').trim(), goals=(d.goals||'').trim(), dream=(d.dream||'').trim(),
+      talents=(d.talents||'').trim(), causes=(d.causes||'').trim(), posts=(d.posts||'').trim();
+  var photo=(d.photo||'');
+  var FF='font-family:Arial,Helvetica,sans-serif';
+
+  function chips(val,hash){
+    var parts=String(val||'').split(/[,\n]|\s+and\s+/i).map(function(s){return s.trim();}).filter(Boolean);
+    if(!parts.length) return '';
+    return parts.map(function(p){
+      var label=hash?('#'+p.replace(/[^A-Za-z0-9]+/g,'')):p;
+      return '<span style="display:inline-block;background:#efeafe;color:#6d28d9;border:1px solid #e2d9fb;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;margin:0 7px 7px 0;'+FF+'">'+esc(label)+'</span>';
+    }).join('');
+  }
+  function feed(val){
+    var arr=String(val||'').split(/\n/).map(function(s){return s.replace(/^[\s•\-•]+/,'').trim();}).filter(Boolean);
+    if(!arr.length) return '';
+    var seeds=[58,124,231,87,176];
+    return arr.map(function(p,i){
+      var likes=12+(seeds[i%seeds.length]%120), comments=1+(i*3+2)%14, shares=(i*2+1)%9;
+      return '<div style="display:flex;gap:11px;padding:11px 13px;border:1px solid #ece9f6;border-radius:14px;margin-bottom:9px;background:#fff;'+FF+'">'
+        +'<div style="width:30px;height:30px;border-radius:50%;flex:0 0 auto;background:linear-gradient(135deg,#7c3aed,#ec4899)"></div>'
+        +'<div style="flex:1"><div style="font-size:14px;color:#1f2440;line-height:1.45">'+esc(p)+'</div>'
+        +'<div style="margin-top:6px;font-size:12px;color:#9aa0b4;font-weight:600">❤️ '+likes+' 💬 '+comments+' 🔁 '+shares+'</div></div></div>';
+    }).join('');
+  }
+  function statPill(emoji,label){
+    return '<div style="flex:1;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.25);border-radius:12px;padding:9px 6px;text-align:center;'+FF+'">'
+      +'<div style="font-size:17px;line-height:1">'+emoji+'</div>'
+      +'<div style="font-size:11px;font-weight:700;margin-top:4px;opacity:.95">'+esc(label)+'</div></div>';
+  }
+  function highlight(emoji,label,val){
+    return '<div style="display:flex;gap:12px;align-items:flex-start;background:#f3f1fb;border:1px solid #e4def6;border-radius:14px;padding:12px 14px;margin-bottom:12px;'+FF+'">'
+      +'<div style="font-size:21px;line-height:1">'+emoji+'</div>'
+      +'<div><div style="font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:#7c3aed;font-weight:800">'+esc(label)+'</div>'
+      +'<div style="font-size:15px;color:#1f2440;margin-top:3px;line-height:1.45">'+val+'</div></div></div>';
+  }
+  function section(emoji,label,inner){
+    return '<div style="margin-bottom:14px;'+FF+'"><div style="font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:#7c3aed;font-weight:800;margin-bottom:9px">'+emoji+' '+esc(label)+'</div>'+inner+'</div>';
+  }
+  var dreamWord = dream ? esc(dream.split(/[ ,]/)[0])+'-bound' : 'dreaming big';
+
+  return ''
+   +'<div style="width:600px;background:#ffffff;'+FF+';color:#1f2440">'
+    // ── banner ──
+    +'<div style="background:linear-gradient(120deg,#7c3aed,#a855f7 50%,#ec4899);padding:20px 22px 26px;color:#fff">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;font-weight:800;opacity:.92">'
+        +'<span>My Future Profile</span><span>✨ Future-ready</span></div>'
+      +'<div style="display:flex;align-items:center;gap:15px;margin-top:15px">'
+        +'<div style="width:70px;height:70px;border-radius:50%;border:3px solid rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:33px;font-weight:800;overflow:hidden;'
+          +(photo?'background:#fff center/cover no-repeat;background-image:url('+photo+')':'background:rgba(255,255,255,0.18)')+'">'+(photo?'':initial)+'</div>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div style="display:flex;align-items:center;gap:7px;font-size:23px;font-weight:800;line-height:1.1">'+esc(name)
+            +'<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#38bdf8;color:#fff;font-size:12px;font-weight:700">✓</span></div>'
+          +'<div style="font-size:13px;opacity:.92;margin-top:4px">'+esc(handle)+' · building my future</div>'
+        +'</div>'
+      +'</div>'
+      +(bio?'<div style="margin-top:15px;font-size:15px;line-height:1.5;background:rgba(255,255,255,0.15);border-radius:13px;padding:11px 14px">“'+esc(bio)+'”</div>':'')
+      +'<div style="display:flex;gap:8px;margin-top:14px">'+statPill('🎯','On a mission')+statPill('🎓',dreamWord)+statPill('💯','Authentic')+'</div>'
+    +'</div>'
+    // ── body ──
+    +'<div style="padding:18px 22px 6px">'
+      +(dream?highlight('🎓','Dream College / Job',esc(dream)):'')
+      +(goals?highlight('📌','The goal I’m chasing',nl2br(goals)):'')
+      +(talents?section('⭐','My talents',chips(talents,false)):'')
+      +(causes?section('💜','Causes I care about',chips(causes,true)):'')
+      +(posts?section('📣','Posts that show my best self',feed(posts)):'')
+    +'</div>'
+    // ── footer ──
+    +'<div style="padding:12px 22px;background:#f7f7fb;border-top:1px solid #ece9f6;font-size:11px;color:#8b8fa3;'+FF+';display:flex;justify-content:space-between">'
+      +'<span>Post or Pause</span><span>SR1 C.O.O.L.™ · Social Media Smarts</span></div>'
+   +'</div>';
+}
+function showProfileCard(){
+  playClick(); pfSave();
+  var d=pfDraft();
+  document.getElementById('profileInner').innerHTML=
+    '<div class="pf-head"><div class="pf-eyebrow">Your Card</div><h2>This Is Your Future Profile</h2>'
+    +'<p>Save it as an image or print it. This is who you want the internet to meet.</p></div>'
+    +'<div class="pf-card-stage"><div id="profileCard">'+makeCardHTML(d)+'</div></div>'
+    +'<div class="pf-actions">'
+      +'<button class="restart-btn" onclick="downloadProfileCard()">'+svgIcon('camera')+' Save as image</button>'
+      +'<button class="ghost-btn" onclick="printProfileCard()">'+svgIcon('clipboard')+' Print / PDF</button>'
+      +(submitEnabled()?'<button class="ghost-btn" id="pfSubmitBtn" onclick="submitProfile()">'+svgIcon('megaphone')+' Submit to class</button>':'')
+      +'<button class="ghost-btn" onclick="renderProfileForm()">'+svgIcon('edit')+' Edit</button>'
+      +'<button class="ghost-btn" onclick="goHome()">'+svgIcon('home')+' Home</button></div>'
+    +'<div class="pf-tip">'+(submitEnabled()
+        ?'“Submit to class” shares your profile with your teacher. Everything else stays on this device.'
+        :'Nothing is uploaded — your card is created right here on your device.')+'</div>';
+  scrollTop();
+}
+function submitEnabled(){ return typeof SUBMIT_URL==='string' && SUBMIT_URL.indexOf('http')===0; }
+function submitProfile(){
+  if(!submitEnabled()) return;
+  var btn=document.getElementById('pfSubmitBtn');
+  if(btn){ if(btn.dataset.sent){ return; } btn.disabled=true; btn.style.opacity='0.6'; }
+  var d=pfDraft();
+  var payload={ ts:new Date().toISOString(), name:d.name||'', bio:d.bio||'', goals:d.goals||'',
+    dream:d.dream||'', talents:d.talents||'', causes:d.causes||'', posts:d.posts||'' };
+  try{
+    fetch(SUBMIT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(payload) })
+      .then(function(){ submitDone(btn); })
+      .catch(function(){ submitDone(btn); }); // no-cors response is opaque; treat as sent
+  }catch(e){ submitDone(btn); }
+}
+function submitDone(btn){
+  playSuccess();
+  showNotif('checkCircle','Sent to your teacher','Your Future Profile was submitted.',4000);
+  if(btn){ btn.dataset.sent='1'; btn.innerHTML=svgIcon('checkCircle')+' Submitted'; btn.style.opacity='1'; }
+}
+function printProfileCard(){ playClick(); window.print(); }
+function downloadProfileCard(){
+  playClick();
+  var card=document.getElementById('profileCard');
+  var w=600, h=Math.ceil(card.getBoundingClientRect().height) || 760;
+  var html=card.innerHTML;
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'">'
+    +'<foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="width:'+w+'px">'+html+'</div></foreignObject></svg>';
+  var blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var img=new Image();
+  img.onload=function(){
+    try{
+      var scale=2, canvas=document.createElement('canvas');
+      canvas.width=w*scale; canvas.height=h*scale;
+      var ctx=canvas.getContext('2d'); ctx.scale(scale,scale);
+      ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h);
+      ctx.drawImage(img,0,0);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(function(b){
+        var a=document.createElement('a');
+        a.download='my-future-profile.png';
+        a.href=URL.createObjectURL(b); a.click();
+        setTimeout(function(){ URL.revokeObjectURL(a.href); },1000);
+      },'image/png');
+    }catch(e){ showNotif('clipboard','Use Print instead','Image export isn’t supported here — try Print / PDF.',4500); }
+  };
+  img.onerror=function(){ URL.revokeObjectURL(url); showNotif('clipboard','Use Print instead','Image export isn’t supported here — try Print / PDF.',4500); };
+  img.src=url;
 }
 
 // ══════════════════════════════════════════
